@@ -57,46 +57,18 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define sharp_Pin GPIO_PIN_0
-#define sharp_GPIO_Port GPIOA
-#define IR_linea1_Pin GPIO_PIN_1
-#define IR_linea1_GPIO_Port GPIOA
-#define ESP8266_RX_Pin GPIO_PIN_2
-#define ESP8266_RX_GPIO_Port GPIOA
-#define ESP8266_TX_Pin GPIO_PIN_3
-#define ESP8266_TX_GPIO_Port GPIOA
-#define IR_linea2_Pin GPIO_PIN_4
-#define IR_linea2_GPIO_Port GPIOA
-#define sensor_corriente_Pin GPIO_PIN_5
-#define sensor_corriente_GPIO_Port GPIOA
-#define voltaje_bateria_Pin GPIO_PIN_6
-#define voltaje_bateria_GPIO_Port GPIOA
-#define OLED_SCL_Pin GPIO_PIN_10
-#define OLED_SCL_GPIO_Port GPIOB
-#define OLED_SDA_Pin GPIO_PIN_11
-#define OLED_SDA_GPIO_Port GPIOB
-#define TRIG_Pin GPIO_PIN_12
-#define TRIG_GPIO_Port GPIOB
-#define ECHO_Pin GPIO_PIN_13
-#define ECHO_GPIO_Port GPIOB
-#define Boton_Pin GPIO_PIN_14
-#define Boton_GPIO_Port GPIOB
-#define motor_izq1_Pin GPIO_PIN_8
-#define motor_izq1_GPIO_Port GPIOA
-#define motor_izq2_Pin GPIO_PIN_9
-#define motor_izq2_GPIO_Port GPIOA
-#define motor_der1_Pin GPIO_PIN_10
-#define motor_der1_GPIO_Port GPIOA
-#define motor_der2_Pin GPIO_PIN_11
-#define motor_der2_GPIO_Port GPIOA
-#define RGB_rojo_Pin GPIO_PIN_6
-#define RGB_rojo_GPIO_Port GPIOB
-#define RGB_verde_Pin GPIO_PIN_7
-#define RGB_verde_GPIO_Port GPIOB
-#define RGB_azul_Pin GPIO_PIN_8
-#define RGB_azul_GPIO_Port GPIOB
-#define Buzzer_Pin GPIO_PIN_9
-#define Buzzer_GPIO_Port GPIOB
+#define Rs_Pin GPIO_PIN_10
+#define Rs_GPIO_Port GPIOB
+#define E_Pin GPIO_PIN_11
+#define E_GPIO_Port GPIOB
+#define D4_Pin GPIO_PIN_12
+#define D4_GPIO_Port GPIOB
+#define D5_Pin GPIO_PIN_13
+#define D5_GPIO_Port GPIOB
+#define D6_Pin GPIO_PIN_14
+#define D6_GPIO_Port GPIOB
+#define D7_Pin GPIO_PIN_15
+#define D7_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
