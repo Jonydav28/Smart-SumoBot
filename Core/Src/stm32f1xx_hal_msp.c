@@ -101,10 +101,11 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**ADC1 GPIO Configuration
     PA0-WKUP     ------> ADC1_IN0
+    PA1     ------> ADC1_IN1
     */
-    GPIO_InitStruct.Pin = ADCV_LiPo_Pin;
+    GPIO_InitStruct.Pin = ADCV_LiPo_Pin|ADC_Current_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-    HAL_GPIO_Init(ADCV_LiPo_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* USER CODE BEGIN ADC1_MspInit 1 */
 
@@ -132,8 +133,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 
     /**ADC1 GPIO Configuration
     PA0-WKUP     ------> ADC1_IN0
+    PA1     ------> ADC1_IN1
     */
-    HAL_GPIO_DeInit(ADCV_LiPo_GPIO_Port, ADCV_LiPo_Pin);
+    HAL_GPIO_DeInit(GPIOA, ADCV_LiPo_Pin|ADC_Current_Pin);
 
     /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
