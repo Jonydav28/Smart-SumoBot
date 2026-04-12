@@ -111,17 +111,17 @@ int main(void)
 
   void motor_a_direction(uint8_t forward) {
       if(forward) {
-          HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_SET);
-          HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_RESET);
+          HAL_GPIO_WritePin(IN1_M_GPIO_Port , IN1_M_Pin, GPIO_PIN_SET);
+          HAL_GPIO_WritePin(IN2_M_GPIO_Port, IN2_M_Pin, GPIO_PIN_RESET);
       } else {
-          HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_RESET);
-          HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_SET);
+          HAL_GPIO_WritePin(IN1_M_GPIO_Port , IN1_M_Pin, GPIO_PIN_RESET);
+          HAL_GPIO_WritePin(IN2_M_GPIO_Port, IN2_M_Pin, GPIO_PIN_SET);
       }
   }
 
   void motor_a_stop(void) {
-      HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(IN1_M_GPIO_Port , IN1_M_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(IN2_M_GPIO_Port, IN2_M_Pin, GPIO_PIN_RESET);
   }
 
   /* USER CODE END 2 */
