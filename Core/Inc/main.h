@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define ADCV_LiPo_GPIO_Port GPIOA
 #define ADC_Current_Pin GPIO_PIN_1
 #define ADC_Current_GPIO_Port GPIOA
+#define TRIG_Pin GPIO_PIN_0
+#define TRIG_GPIO_Port GPIOB
+#define ECHO_Pin GPIO_PIN_1
+#define ECHO_GPIO_Port GPIOB
 #define Rs_Pin GPIO_PIN_10
 #define Rs_GPIO_Port GPIOB
 #define E_Pin GPIO_PIN_11
@@ -73,6 +77,10 @@ void Error_Handler(void);
 #define D6_GPIO_Port GPIOB
 #define D7_Pin GPIO_PIN_15
 #define D7_GPIO_Port GPIOB
+#define ENA_Pin GPIO_PIN_8
+#define ENA_GPIO_Port GPIOA
+#define ENB_Pin GPIO_PIN_11
+#define ENB_GPIO_Port GPIOA
 #define Bot_n_Op_Pin GPIO_PIN_7
 #define Bot_n_Op_GPIO_Port GPIOB
 
