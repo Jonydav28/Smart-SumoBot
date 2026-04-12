@@ -95,6 +95,35 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+
+  void set_motor_speed(uint8_t motor, uint16_t duty) {
+      uint16_t max_duty = 7199;
+      uint16_t ccr_value = (duty * max_duty) / 100;
+
+      if(motor == 0) {
+          __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, ccr_value);
+      } else {
+          __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, ccr_value);
+      }
+  }
+
+  void motor_a_direction(uint8_t forward) {
+      if(forward) {
+          HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_SET);
+          HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_RESET);
+      } else {
+          HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_RESET);
+          HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_SET);
+      }
+  }
+
+  void motor_a_stop(void) {
+      HAL_GPIO_WritePin(MOTOR_A_IN1_GPIO_Port, MOTOR_A_IN1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(MOTOR_A_IN2_GPIO_Port, MOTOR_A_IN2_Pin, GPIO_PIN_RESET);
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
