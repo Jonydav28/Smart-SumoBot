@@ -86,11 +86,6 @@ uint16_t adc_sharp = 0;
 #define ESTADO_DERROTA           6
 #define ESTADO_IMPACTO           7
 
-uint8_t estado_rgb = ESTADO_ESPERA;
-uint32_t tiempo_rgb = 0;
-uint8_t rgb_toggle = 0;
-uint32_t tiempo_impacto_rgb = 0;
-uint8_t impacto_activo = 0;
 
 /* USER CODE END PV */
 
@@ -147,11 +142,6 @@ void RGB_Amarillo(void);
 void RGB_Rojo(void);
 void RGB_Morado(void);
 void RGB_Blanco(void);
-
-void RGB_SetEstado(uint8_t estado);
-void RGB_Actualizar(void);
-void RGB_Impacto_Breve(void);
-void RGB_Estado(uint8_t estado);
 
 
 /* USER CODE END PFP */
@@ -415,7 +405,7 @@ int main(void)
 	    HAL_Delay(1500);
 */
 /*Prueba de colores de RGB*/
-/*	    RGB_Azul();
+	    RGB_Azul();
 	    HAL_Delay(1000);
 
 	    RGB_Verde();
@@ -435,115 +425,6 @@ int main(void)
 
 	    RGB_Off();
 	    HAL_Delay(1000);
-*/
- /*Prueba de LED en diferentes estados con OLED*/
-	    // ESTADO ESPERA
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: ESPERA", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Amarillo blink", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_ESPERA);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // ESTADO AUTO
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: AUTO", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Verde fijo", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_AUTO);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // ESTADO BATERIA BAJA
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: BAT BAJA", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Rojo blink", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_BATERIA_BAJA);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // ESTADO BT SIN EMPAREJAR
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: BT SIN", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Morado blink", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_BT_SIN_EMPAREJAR);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // ESTADO VICTORIA
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: VICTORIA", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Verde rapido", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_VICTORIA);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // ESTADO DERROTA
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: DERROTA", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Rojo fijo", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_DERROTA);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    // IMPACTO BREVE
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: IMPACTO", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Blanco breve", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_Impacto_Breve();
-	    for (int i = 0; i < 80; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
-	    RGB_Off();
-	    HAL_Delay(500);
   }
 
   /* USER CODE END 3 */
@@ -1579,13 +1460,6 @@ void RGB_Set(uint8_t r, uint8_t g, uint8_t b)
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, b ? RGB_ON : RGB_OFF);
 }
 
-void RGB_SetEstado(uint8_t estado)
-{
-    estado_rgb = estado;
-    tiempo_rgb = HAL_GetTick();
-    rgb_toggle = 0;
-}
-
 void RGB_Off(void)
 {
     RGB_Set(0, 0, 0);
@@ -1662,116 +1536,6 @@ void RGB_Estado(uint8_t estado)
             break;
     }
 }
-
-void RGB_Impacto_Breve(void)
-{
-    impacto_activo = 1;
-    tiempo_impacto_rgb = HAL_GetTick();
-    RGB_Blanco();
-}
-
-void RGB_Actualizar(void)
-{
-    uint32_t ahora = HAL_GetTick();
-
-    // Prioridad máxima: impacto blanco breve
-    if (impacto_activo)
-    {
-        if (ahora - tiempo_impacto_rgb < 180)
-        {
-            RGB_Blanco();
-            return;
-        }
-        else
-        {
-            impacto_activo = 0;
-        }
-    }
-
-    switch (estado_rgb)
-    {
-        case ESTADO_BT_CONTROL:
-            // Azul fijo
-            RGB_Azul();
-            break;
-
-        case ESTADO_AUTO:
-            // Verde fijo
-            RGB_Verde();
-            break;
-
-        case ESTADO_ESPERA:
-            // Amarillo intermitente lento
-            if (ahora - tiempo_rgb >= 500)
-            {
-                tiempo_rgb = ahora;
-                rgb_toggle = !rgb_toggle;
-            }
-
-            if (rgb_toggle)
-                RGB_Amarillo();
-            else
-                RGB_Off();
-            break;
-
-        case ESTADO_BATERIA_BAJA:
-            // Rojo intermitente
-            if (ahora - tiempo_rgb >= 300)
-            {
-                tiempo_rgb = ahora;
-                rgb_toggle = !rgb_toggle;
-            }
-
-            if (rgb_toggle)
-                RGB_Rojo();
-            else
-                RGB_Off();
-            break;
-
-        case ESTADO_BT_SIN_EMPAREJAR:
-            // Morado intermitente
-            if (ahora - tiempo_rgb >= 400)
-            {
-                tiempo_rgb = ahora;
-                rgb_toggle = !rgb_toggle;
-            }
-
-            if (rgb_toggle)
-                RGB_Morado();
-            else
-                RGB_Off();
-            break;
-
-        case ESTADO_VICTORIA:
-            // Verde parpadeo rápido
-            if (ahora - tiempo_rgb >= 120)
-            {
-                tiempo_rgb = ahora;
-                rgb_toggle = !rgb_toggle;
-            }
-
-            if (rgb_toggle)
-                RGB_Verde();
-            else
-                RGB_Off();
-            break;
-
-        case ESTADO_DERROTA:
-            // Rojo fijo
-            RGB_Rojo();
-            break;
-
-        case ESTADO_IMPACTO:
-            // Blanco fijo si se usa como estado, aunque es mejor usar RGB_Impacto_Breve()
-            RGB_Blanco();
-            break;
-
-        default:
-            RGB_Off();
-            break;
-    }
-}
-
 
 /* USER CODE END 4 */
 
