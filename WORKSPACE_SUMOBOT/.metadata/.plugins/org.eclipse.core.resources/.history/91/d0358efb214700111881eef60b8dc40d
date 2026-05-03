@@ -96,19 +96,13 @@ uint32_t medir_ultrasonico(GPIO_TypeDef *TRIG_Port, uint16_t TRIG_Pin,
 uint16_t leer_sharp_adc(void);
 void modo_autonomo_basico(void);
 
-void OLED_Espera_Frame(uint8_t ojos_abiertos);
-void OLED_Busqueda_Frame(int desplazamiento);
-void OLED_Ataque_Frame(uint8_t boca_abierta);
-void OLED_Impacto_Frame(uint8_t frame);
-void OLED_Victoria_Frame(uint8_t frame);
-void OLED_Derrota_Frame(uint8_t frame);
 
-void OLED_Animacion_Espera(void);
-void OLED_Animacion_Busqueda(void);
-void OLED_Animacion_Ataque(void);
-void OLED_Animacion_Impacto(void);
-void OLED_Animacion_Victoria(void);
-void OLED_Animacion_Derrota(void);
+void OLED_Cara_Espera(void);
+void OLED_Cara_Ataque(void);
+void OLED_Cara_Busqueda(void);
+void OLED_Cara_Impacto(void);
+void OLED_Cara_Victoria(void);
+void OLED_Cara_Derrota(void);
 
 /* USER CODE END PFP */
 
@@ -303,23 +297,23 @@ int main(void)
 
 
 /*Prueba caras OLED*/
-	    OLED_Animacion_Espera();
-	    HAL_Delay(300);
+	    OLED_Cara_Espera();
+	    HAL_Delay(1500);
 
-	    OLED_Animacion_Busqueda();
-	    HAL_Delay(300);
+	    OLED_Cara_Busqueda();
+	    HAL_Delay(1500);
 
-	    OLED_Animacion_Ataque();
-	    HAL_Delay(300);
+	    OLED_Cara_Ataque();
+	    HAL_Delay(1500);
 
-	    OLED_Animacion_Impacto();
-	    HAL_Delay(300);
+	    OLED_Cara_Impacto();
+	    HAL_Delay(1500);
 
-	    OLED_Animacion_Victoria();
-	    HAL_Delay(300);
+	    OLED_Cara_Victoria();
+	    HAL_Delay(1500);
 
-	    OLED_Animacion_Derrota();
-	    HAL_Delay(300);
+	    OLED_Cara_Derrota();
+	    HAL_Delay(1500);
   }
 
   /* USER CODE END 3 */
@@ -830,292 +824,127 @@ void modo_autonomo_basico(void)
     }
 }
 
-void OLED_Espera_Frame(uint8_t ojos_abiertos)
+void OLED_Cara_Espera(void)
 {
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(34, 0);
     ssd1306_WriteString("ESPERA", Font_7x10, White);
 
-    // Antenas / orejitas
-    ssd1306_Line(38, 15, 30, 6, White);
-    ssd1306_Line(90, 15, 98, 6, White);
-    ssd1306_FillCircle(30, 6, 2, White);
-    ssd1306_FillCircle(98, 6, 2, White);
-
-    // Cabeza
-    ssd1306_DrawRectangle(22, 16, 106, 62, White);
-    ssd1306_DrawRectangle(24, 18, 104, 60, White);
-
-    if (ojos_abiertos)
-    {
-        ssd1306_FillCircle(44, 34, 6, White);
-        ssd1306_FillCircle(84, 34, 6, White);
-    }
-    else
-    {
-        ssd1306_Line(36, 34, 52, 34, White);
-        ssd1306_Line(76, 34, 92, 34, White);
-    }
+    // Ojos
+    ssd1306_FillCircle(40, 30, 6, White);
+    ssd1306_FillCircle(88, 30, 6, White);
 
     // Boca neutra
-    ssd1306_Line(54, 50, 74, 50, White);
+    ssd1306_Line(52, 50, 76, 50, White);
 
     ssd1306_UpdateScreen();
 }
 
-void OLED_Busqueda_Frame(int desplazamiento)
-{
-    ssd1306_Fill(Black);
-
-    ssd1306_SetCursor(24, 0);
-    ssd1306_WriteString("BUSCANDO", Font_7x10, White);
-
-    // Cabeza
-    ssd1306_DrawRectangle(20, 14, 108, 62, White);
-    ssd1306_DrawRectangle(22, 16, 106, 60, White);
-
-    // Ojos grandes
-    ssd1306_DrawCircle(44, 35, 9, White);
-    ssd1306_DrawCircle(84, 35, 9, White);
-
-    // Pupilas moviles
-    ssd1306_FillCircle(44 + desplazamiento, 35, 3, White);
-    ssd1306_FillCircle(84 + desplazamiento, 35, 3, White);
-
-    // Boca pequeña
-    ssd1306_Line(58, 52, 70, 52, White);
-
-    // Radar superior
-    ssd1306_Line(64, 14, 64, 7, White);
-    ssd1306_DrawCircle(64, 5, 2, White);
-
-    ssd1306_UpdateScreen();
-}
-
-void OLED_Ataque_Frame(uint8_t boca_abierta)
+void OLED_Cara_Ataque(void)
 {
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(34, 0);
     ssd1306_WriteString("ATAQUE", Font_7x10, White);
 
-    // Cabeza inclinada/agresiva
-    ssd1306_DrawRectangle(18, 15, 110, 62, White);
-    ssd1306_DrawRectangle(20, 17, 108, 60, White);
-
     // Cejas agresivas
-    ssd1306_Line(30, 25, 54, 34, White);
-    ssd1306_Line(74, 34, 98, 25, White);
+    ssd1306_Line(28, 20, 52, 28, White);
+    ssd1306_Line(76, 28, 100, 20, White);
 
-    // Ojos cuadrados
-    ssd1306_FillRectangle(35, 36, 51, 43, White);
-    ssd1306_FillRectangle(77, 36, 93, 43, White);
+    // Ojos
+    ssd1306_FillRectangle(34, 31, 46, 39, White);
+    ssd1306_FillRectangle(82, 31, 94, 39, White);
 
-    if (boca_abierta)
-    {
-        // Boca gritando
-        ssd1306_DrawRectangle(54, 50, 74, 61, White);
-        ssd1306_Line(57, 54, 71, 54, White);
-        ssd1306_Line(57, 58, 71, 58, White);
-    }
-    else
-    {
-        // Boca seria
-        ssd1306_Line(52, 54, 76, 54, White);
-        ssd1306_Line(52, 55, 76, 55, White);
-    }
+    // Boca seria
+    ssd1306_Line(50, 52, 78, 52, White);
+    ssd1306_Line(50, 53, 78, 53, White);
 
     ssd1306_UpdateScreen();
 }
 
-void OLED_Impacto_Frame(uint8_t frame)
+void OLED_Cara_Busqueda(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(24, 0);
+    ssd1306_WriteString("BUSCANDO", Font_7x10, White);
+
+    // Ojos mirando a un lado
+    ssd1306_DrawCircle(40, 32, 8, White);
+    ssd1306_DrawCircle(88, 32, 8, White);
+
+    ssd1306_FillCircle(44, 32, 3, White);
+    ssd1306_FillCircle(92, 32, 3, White);
+
+    // Boca pequeña
+    ssd1306_Line(58, 52, 70, 52, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Impacto(void)
 {
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(30, 0);
     ssd1306_WriteString("IMPACTO", Font_7x10, White);
 
-    // Cabeza
-    ssd1306_DrawRectangle(20, 15, 108, 62, White);
-
     // Ojos en X
-    ssd1306_Line(34, 26, 50, 42, White);
-    ssd1306_Line(50, 26, 34, 42, White);
+    ssd1306_Line(32, 24, 48, 40, White);
+    ssd1306_Line(48, 24, 32, 40, White);
 
-    ssd1306_Line(78, 26, 94, 42, White);
-    ssd1306_Line(94, 26, 78, 42, White);
+    ssd1306_Line(80, 24, 96, 40, White);
+    ssd1306_Line(96, 24, 80, 40, White);
 
-    // Boca de sorpresa cambia tamaño
-    if (frame % 2 == 0)
-    {
-        ssd1306_DrawCircle(64, 53, 6, White);
-    }
-    else
-    {
-        ssd1306_DrawCircle(64, 53, 9, White);
-    }
-
-    // Chispas
-    ssd1306_Line(8, 20, 16, 20, White);
-    ssd1306_Line(12, 16, 12, 24, White);
-
-    ssd1306_Line(112, 20, 120, 20, White);
-    ssd1306_Line(116, 16, 116, 24, White);
+    // Boca abierta
+    ssd1306_DrawCircle(64, 53, 7, White);
 
     ssd1306_UpdateScreen();
 }
 
-void OLED_Victoria_Frame(uint8_t frame)
+void OLED_Cara_Victoria(void)
 {
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(30, 0);
     ssd1306_WriteString("VICTORIA", Font_7x10, White);
 
-    // Cabeza
-    ssd1306_DrawRectangle(20, 15, 108, 62, White);
-
     // Ojos felices
-    ssd1306_Line(34, 36, 42, 28, White);
-    ssd1306_Line(42, 28, 50, 36, White);
+    ssd1306_Line(32, 30, 40, 24, White);
+    ssd1306_Line(40, 24, 48, 30, White);
 
-    ssd1306_Line(78, 36, 86, 28, White);
-    ssd1306_Line(86, 28, 94, 36, White);
+    ssd1306_Line(80, 30, 88, 24, White);
+    ssd1306_Line(88, 24, 96, 30, White);
 
-    // Sonrisa grande
-    ssd1306_Line(48, 48, 56, 56, White);
-    ssd1306_Line(56, 56, 72, 56, White);
-    ssd1306_Line(72, 56, 80, 48, White);
-
-    // Confetti alternado
-    if (frame % 2 == 0)
-    {
-        ssd1306_FillRectangle(8, 18, 10, 20, White);
-        ssd1306_FillRectangle(116, 34, 118, 36, White);
-        ssd1306_Line(14, 48, 20, 42, White);
-    }
-    else
-    {
-        ssd1306_FillRectangle(14, 28, 16, 30, White);
-        ssd1306_FillRectangle(110, 18, 112, 20, White);
-        ssd1306_Line(108, 50, 114, 44, White);
-    }
+    // Sonrisa
+    ssd1306_Line(50, 48, 58, 56, White);
+    ssd1306_Line(58, 56, 70, 56, White);
+    ssd1306_Line(70, 56, 78, 48, White);
 
     ssd1306_UpdateScreen();
 }
 
-void OLED_Derrota_Frame(uint8_t frame)
+void OLED_Cara_Derrota(void)
 {
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(34, 0);
     ssd1306_WriteString("DERROTA", Font_7x10, White);
 
-    // Cabeza
-    ssd1306_DrawRectangle(20, 15, 108, 62, White);
-
     // Ojos caidos
-    ssd1306_Line(34, 34, 50, 28, White);
-    ssd1306_Line(78, 28, 94, 34, White);
+    ssd1306_Line(32, 30, 48, 26, White);
+    ssd1306_Line(80, 26, 96, 30, White);
 
-    // Lagrima animada
-    if (frame % 2 == 0)
-    {
-        ssd1306_Line(44, 38, 44, 44, White);
-    }
-    else
-    {
-        ssd1306_Line(44, 42, 44, 50, White);
-    }
+    // Lagrima
+    ssd1306_Line(42, 34, 42, 42, White);
 
     // Boca triste
-    ssd1306_Line(48, 56, 56, 48, White);
-    ssd1306_Line(56, 48, 72, 48, White);
-    ssd1306_Line(72, 48, 80, 56, White);
+    ssd1306_Line(50, 56, 58, 48, White);
+    ssd1306_Line(58, 48, 70, 48, White);
+    ssd1306_Line(70, 48, 78, 56, White);
 
     ssd1306_UpdateScreen();
-}
-
-void OLED_Animacion_Espera(void)
-{
-    OLED_Espera_Frame(1);
-    HAL_Delay(700);
-
-    OLED_Espera_Frame(0);
-    HAL_Delay(120);
-
-    OLED_Espera_Frame(1);
-    HAL_Delay(700);
-}
-
-void OLED_Animacion_Busqueda(void)
-{
-    OLED_Busqueda_Frame(-5);
-    HAL_Delay(150);
-
-    OLED_Busqueda_Frame(0);
-    HAL_Delay(150);
-
-    OLED_Busqueda_Frame(5);
-    HAL_Delay(150);
-
-    OLED_Busqueda_Frame(0);
-    HAL_Delay(150);
-}
-
-void OLED_Animacion_Ataque(void)
-{
-    OLED_Ataque_Frame(0);
-    HAL_Delay(150);
-
-    OLED_Ataque_Frame(1);
-    HAL_Delay(150);
-
-    OLED_Ataque_Frame(0);
-    HAL_Delay(150);
-
-    OLED_Ataque_Frame(1);
-    HAL_Delay(150);
-}
-
-void OLED_Animacion_Impacto(void)
-{
-    OLED_Impacto_Frame(0);
-    HAL_Delay(150);
-
-    OLED_Impacto_Frame(1);
-    HAL_Delay(150);
-
-    OLED_Impacto_Frame(0);
-    HAL_Delay(150);
-}
-
-void OLED_Animacion_Victoria(void)
-{
-    OLED_Victoria_Frame(0);
-    HAL_Delay(200);
-
-    OLED_Victoria_Frame(1);
-    HAL_Delay(200);
-
-    OLED_Victoria_Frame(0);
-    HAL_Delay(200);
-
-    OLED_Victoria_Frame(1);
-    HAL_Delay(200);
-}
-
-void OLED_Animacion_Derrota(void)
-{
-    OLED_Derrota_Frame(0);
-    HAL_Delay(250);
-
-    OLED_Derrota_Frame(1);
-    HAL_Delay(250);
-
-    OLED_Derrota_Frame(0);
-    HAL_Delay(250);
 }
 
 /* USER CODE END 4 */
