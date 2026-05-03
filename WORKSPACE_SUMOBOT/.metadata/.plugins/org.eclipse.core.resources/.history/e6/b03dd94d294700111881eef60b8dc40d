@@ -119,7 +119,7 @@ void buzzer_impacto(void);
 void buzzer_victoria(void);
 void buzzer_derrota(void);
 void buzzer_bateria_baja(void);
-void buzzer_ataque(void);
+
 
 /* USER CODE END PFP */
 
@@ -338,49 +338,43 @@ int main(void)
 	    HAL_Delay(300);
 */
 /* Prueba de Buzzer en diferentes modos*/
+	  while (1)
+	  {
+	      ssd1306_Fill(Black);
+	      ssd1306_SetCursor(5, 20);
+	      ssd1306_WriteString("BUZZER: INICIO", Font_7x10, White);
+	      ssd1306_UpdateScreen();
+	      buzzer_inicio();
+	      HAL_Delay(1000);
 
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: INICIO", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_inicio();
-	    HAL_Delay(1000);
+	      ssd1306_Fill(Black);
+	      ssd1306_SetCursor(5, 20);
+	      ssd1306_WriteString("BUZZER: IMPACTO", Font_7x10, White);
+	      ssd1306_UpdateScreen();
+	      buzzer_impacto();
+	      HAL_Delay(1000);
 
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: ATAQUE", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_ataque();
-	    HAL_Delay(1000);
+	      ssd1306_Fill(Black);
+	      ssd1306_SetCursor(5, 20);
+	      ssd1306_WriteString("BUZZER: VICTORIA", Font_7x10, White);
+	      ssd1306_UpdateScreen();
+	      buzzer_victoria();
+	      HAL_Delay(1000);
 
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: IMPACTO", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_impacto();
-	    HAL_Delay(1000);
+	      ssd1306_Fill(Black);
+	      ssd1306_SetCursor(5, 20);
+	      ssd1306_WriteString("BUZZER: DERROTA", Font_7x10, White);
+	      ssd1306_UpdateScreen();
+	      buzzer_derrota();
+	      HAL_Delay(1000);
 
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: VICTORIA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_victoria();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: DERROTA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_derrota();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: BAT BAJA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_bateria_baja();
-	    HAL_Delay(1500);
-
+	      ssd1306_Fill(Black);
+	      ssd1306_SetCursor(5, 20);
+	      ssd1306_WriteString("BUZZER: BAT BAJA", Font_7x10, White);
+	      ssd1306_UpdateScreen();
+	      buzzer_bateria_baja();
+	      HAL_Delay(1000);
+	  }
   }
 
   /* USER CODE END 3 */
@@ -1317,93 +1311,6 @@ void buzzer_tono(uint16_t frecuencia, uint16_t duracion_ms)
 void buzzer_off(void)
 {
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-}
-
-void buzzer_inicio(void)
-{
-    // Secuencia de arranque: ascendente
-    buzzer_tono(700, 100);
-    HAL_Delay(40);
-    buzzer_tono(900, 100);
-    HAL_Delay(40);
-    buzzer_tono(1100, 100);
-    HAL_Delay(40);
-    buzzer_tono(1400, 120);
-    HAL_Delay(40);
-    buzzer_tono(1800, 180);
-}
-
-void buzzer_impacto(void)
-{
-    // Golpe: rápido, fuerte y repetido
-    buzzer_tono(1800, 80);
-    HAL_Delay(40);
-    buzzer_tono(600, 90);
-    HAL_Delay(40);
-    buzzer_tono(1800, 80);
-    HAL_Delay(40);
-    buzzer_tono(500, 120);
-}
-
-void buzzer_victoria(void)
-{
-    // Victoria: melodía ascendente y alegre
-    buzzer_tono(900, 100);
-    HAL_Delay(40);
-    buzzer_tono(1100, 100);
-    HAL_Delay(40);
-    buzzer_tono(1300, 100);
-    HAL_Delay(40);
-    buzzer_tono(1600, 120);
-    HAL_Delay(40);
-    buzzer_tono(2000, 150);
-    HAL_Delay(60);
-    buzzer_tono(2300, 220);
-}
-
-void buzzer_derrota(void)
-{
-    // Derrota: descendente y lenta
-    buzzer_tono(1800, 150);
-    HAL_Delay(70);
-    buzzer_tono(1500, 150);
-    HAL_Delay(70);
-    buzzer_tono(1200, 180);
-    HAL_Delay(70);
-    buzzer_tono(900, 200);
-    HAL_Delay(70);
-    buzzer_tono(600, 300);
-}
-
-void buzzer_bateria_baja(void)
-{
-    // Alarma repetitiva: muy reconocible
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(400);
-
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-}
-
-void buzzer_ataque(void)
-{
-    // Ataque: barrido rápido hacia arriba
-    buzzer_tono(1200, 70);
-    HAL_Delay(30);
-    buzzer_tono(1500, 70);
-    HAL_Delay(30);
-    buzzer_tono(1800, 70);
-    HAL_Delay(30);
-    buzzer_tono(2200, 100);
-    HAL_Delay(30);
-    buzzer_tono(2500, 120);
 }
 
 /* USER CODE END 4 */

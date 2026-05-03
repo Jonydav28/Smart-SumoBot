@@ -45,7 +45,6 @@ ADC_HandleTypeDef hadc1;
 
 I2C_HandleTypeDef hi2c1;
 
-TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
@@ -83,7 +82,6 @@ static void MX_ADC1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_I2C1_Init(void);
-static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 void set_pwm(uint32_t canal, int duty);
 void motor_izquierdo(int velocidad);
@@ -111,15 +109,6 @@ void OLED_Animacion_Ataque(void);
 void OLED_Animacion_Impacto(void);
 void OLED_Animacion_Victoria(void);
 void OLED_Animacion_Derrota(void);
-
-void buzzer_tono(uint16_t frecuencia, uint16_t duracion_ms);
-void buzzer_off(void);
-void buzzer_inicio(void);
-void buzzer_impacto(void);
-void buzzer_victoria(void);
-void buzzer_derrota(void);
-void buzzer_bateria_baja(void);
-void buzzer_ataque(void);
 
 /* USER CODE END PFP */
 
@@ -161,11 +150,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_I2C1_Init();
-  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-
   HAL_TIM_Base_Start(&htim2);
 
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -318,7 +303,7 @@ int main(void)
 
 
 /*Prueba caras OLED*/
-/*
+
 	    OLED_Animacion_Espera();
 	    HAL_Delay(300);
 
@@ -336,50 +321,6 @@ int main(void)
 
 	    OLED_Animacion_Derrota();
 	    HAL_Delay(300);
-*/
-/* Prueba de Buzzer en diferentes modos*/
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: INICIO", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_inicio();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: ATAQUE", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_ataque();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: IMPACTO", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_impacto();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: VICTORIA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_victoria();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: DERROTA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_derrota();
-	    HAL_Delay(1000);
-
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 20);
-	    ssd1306_WriteString("BUZZER: BAT BAJA", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-	    buzzer_bateria_baja();
-	    HAL_Delay(1500);
 
   }
 
@@ -514,81 +455,6 @@ static void MX_I2C1_Init(void)
 }
 
 /**
-  * @brief TIM1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM1_Init(void)
-{
-
-  /* USER CODE BEGIN TIM1_Init 0 */
-
-  /* USER CODE END TIM1_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
-  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
-
-  /* USER CODE BEGIN TIM1_Init 1 */
-
-  /* USER CODE END TIM1_Init 1 */
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 71;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 999;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
-  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
-  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0;
-  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
-  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
-  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM1_Init 2 */
-
-  /* USER CODE END TIM1_Init 2 */
-  HAL_TIM_MspPostInit(&htim1);
-
-}
-
-/**
   * @brief TIM2 Initialization Function
   * @param None
   * @retval None
@@ -718,7 +584,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, BIN1_Pin|BIN2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, BIN1_Pin|BIN2_Pin|BUZZER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, AIN1_Pin|AIN2_Pin|TRIG_US_IZQ_Pin|TRIG_US_DER_Pin, GPIO_PIN_RESET);
@@ -730,8 +596,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BIN1_Pin BIN2_Pin */
-  GPIO_InitStruct.Pin = BIN1_Pin|BIN2_Pin;
+  /*Configure GPIO pins : BIN1_Pin BIN2_Pin BUZZER_Pin */
+  GPIO_InitStruct.Pin = BIN1_Pin|BIN2_Pin|BUZZER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1294,118 +1160,6 @@ void OLED_Animacion_Derrota(void)
     OLED_Derrota_Frame(0);
     HAL_Delay(220);
 }
-
-void buzzer_tono(uint16_t frecuencia, uint16_t duracion_ms)
-{
-    if (frecuencia == 0)
-    {
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-        HAL_Delay(duracion_ms);
-        return;
-    }
-
-    uint32_t arr = (1000000 / frecuencia) - 1;
-
-    __HAL_TIM_SET_AUTORELOAD(&htim1, arr);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, arr / 2);
-
-    HAL_Delay(duracion_ms);
-
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-}
-
-void buzzer_off(void)
-{
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-}
-
-void buzzer_inicio(void)
-{
-    // Secuencia de arranque: ascendente
-    buzzer_tono(700, 100);
-    HAL_Delay(40);
-    buzzer_tono(900, 100);
-    HAL_Delay(40);
-    buzzer_tono(1100, 100);
-    HAL_Delay(40);
-    buzzer_tono(1400, 120);
-    HAL_Delay(40);
-    buzzer_tono(1800, 180);
-}
-
-void buzzer_impacto(void)
-{
-    // Golpe: rápido, fuerte y repetido
-    buzzer_tono(1800, 80);
-    HAL_Delay(40);
-    buzzer_tono(600, 90);
-    HAL_Delay(40);
-    buzzer_tono(1800, 80);
-    HAL_Delay(40);
-    buzzer_tono(500, 120);
-}
-
-void buzzer_victoria(void)
-{
-    // Victoria: melodía ascendente y alegre
-    buzzer_tono(900, 100);
-    HAL_Delay(40);
-    buzzer_tono(1100, 100);
-    HAL_Delay(40);
-    buzzer_tono(1300, 100);
-    HAL_Delay(40);
-    buzzer_tono(1600, 120);
-    HAL_Delay(40);
-    buzzer_tono(2000, 150);
-    HAL_Delay(60);
-    buzzer_tono(2300, 220);
-}
-
-void buzzer_derrota(void)
-{
-    // Derrota: descendente y lenta
-    buzzer_tono(1800, 150);
-    HAL_Delay(70);
-    buzzer_tono(1500, 150);
-    HAL_Delay(70);
-    buzzer_tono(1200, 180);
-    HAL_Delay(70);
-    buzzer_tono(900, 200);
-    HAL_Delay(70);
-    buzzer_tono(600, 300);
-}
-
-void buzzer_bateria_baja(void)
-{
-    // Alarma repetitiva: muy reconocible
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(400);
-
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-    HAL_Delay(80);
-    buzzer_tono(1000, 100);
-}
-
-void buzzer_ataque(void)
-{
-    // Ataque: barrido rápido hacia arriba
-    buzzer_tono(1200, 70);
-    HAL_Delay(30);
-    buzzer_tono(1500, 70);
-    HAL_Delay(30);
-    buzzer_tono(1800, 70);
-    HAL_Delay(30);
-    buzzer_tono(2200, 100);
-    HAL_Delay(30);
-    buzzer_tono(2500, 120);
-}
-
 /* USER CODE END 4 */
 
 /**

@@ -81,6 +81,8 @@ void Error_Handler(void);
 #define ECHO_US_IZQ_GPIO_Port GPIOB
 #define ECHO_US_DER_Pin GPIO_PIN_15
 #define ECHO_US_DER_GPIO_Port GPIOB
+#define BUZZER_Pin GPIO_PIN_8
+#define BUZZER_GPIO_Port GPIOA
 #define SCL_OLED_Pin GPIO_PIN_6
 #define SCL_OLED_GPIO_Port GPIOB
 #define SDA_OLED_Pin GPIO_PIN_7
