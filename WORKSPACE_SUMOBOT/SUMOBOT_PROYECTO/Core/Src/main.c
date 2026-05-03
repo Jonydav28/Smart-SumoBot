@@ -74,6 +74,19 @@ uint16_t adc_sharp = 0;
 #define VEL_GIRO_BAJA       45
 #define VEL_GIRO_ALTA       85
 
+#define RGB_ON   GPIO_PIN_SET
+#define RGB_OFF  GPIO_PIN_RESET
+
+#define ESTADO_BT_CONTROL        0
+#define ESTADO_AUTO              1
+#define ESTADO_ESPERA            2
+#define ESTADO_BATERIA_BAJA      3
+#define ESTADO_BT_SIN_EMPAREJAR  4
+#define ESTADO_VICTORIA          5
+#define ESTADO_DERROTA           6
+#define ESTADO_IMPACTO           7
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,6 +133,16 @@ void buzzer_victoria(void);
 void buzzer_derrota(void);
 void buzzer_bateria_baja(void);
 void buzzer_ataque(void);
+
+void RGB_Set(uint8_t r, uint8_t g, uint8_t b);
+void RGB_Off(void);
+void RGB_Azul(void);
+void RGB_Verde(void);
+void RGB_Amarillo(void);
+void RGB_Rojo(void);
+void RGB_Morado(void);
+void RGB_Blanco(void);
+
 
 /* USER CODE END PFP */
 
@@ -338,7 +361,7 @@ int main(void)
 	    HAL_Delay(300);
 */
 /* Prueba de Buzzer en diferentes modos*/
-
+/*
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 20);
 	    ssd1306_WriteString("BUZZER: INICIO", Font_7x10, White);
@@ -380,7 +403,28 @@ int main(void)
 	    ssd1306_UpdateScreen();
 	    buzzer_bateria_baja();
 	    HAL_Delay(1500);
+*/
+/*Prueba de colores de RGB*/
+	    RGB_Azul();
+	    HAL_Delay(1000);
 
+	    RGB_Verde();
+	    HAL_Delay(1000);
+
+	    RGB_Amarillo();
+	    HAL_Delay(1000);
+
+	    RGB_Rojo();
+	    HAL_Delay(1000);
+
+	    RGB_Morado();
+	    HAL_Delay(1000);
+
+	    RGB_Blanco();
+	    HAL_Delay(1000);
+
+	    RGB_Off();
+	    HAL_Delay(1000);
   }
 
   /* USER CODE END 3 */
@@ -718,7 +762,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, BIN1_Pin|BIN2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_R_Pin|LED_G_Pin|LED_B_Pin|BIN1_Pin
+                          |BIN2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, AIN1_Pin|AIN2_Pin|TRIG_US_IZQ_Pin|TRIG_US_DER_Pin, GPIO_PIN_RESET);
@@ -730,8 +775,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BIN1_Pin BIN2_Pin */
-  GPIO_InitStruct.Pin = BIN1_Pin|BIN2_Pin;
+  /*Configure GPIO pins : LED_R_Pin LED_G_Pin LED_B_Pin BIN1_Pin
+                           BIN2_Pin */
+  GPIO_InitStruct.Pin = LED_R_Pin|LED_G_Pin|LED_B_Pin|BIN1_Pin
+                          |BIN2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1404,6 +1451,90 @@ void buzzer_ataque(void)
     buzzer_tono(2200, 100);
     HAL_Delay(30);
     buzzer_tono(2500, 120);
+}
+
+void RGB_Set(uint8_t r, uint8_t g, uint8_t b)
+{
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, r ? RGB_ON : RGB_OFF);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, g ? RGB_ON : RGB_OFF);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, b ? RGB_ON : RGB_OFF);
+}
+
+void RGB_Off(void)
+{
+    RGB_Set(0, 0, 0);
+}
+
+void RGB_Azul(void)
+{
+    RGB_Set(0, 0, 1);
+}
+
+void RGB_Verde(void)
+{
+    RGB_Set(0, 1, 0);
+}
+
+void RGB_Amarillo(void)
+{
+    RGB_Set(1, 1, 0);
+}
+
+void RGB_Rojo(void)
+{
+    RGB_Set(1, 0, 0);
+}
+
+void RGB_Morado(void)
+{
+    RGB_Set(1, 0, 1);
+}
+
+void RGB_Blanco(void)
+{
+    RGB_Set(1, 1, 1);
+}
+
+void RGB_Estado(uint8_t estado)
+{
+    switch (estado)
+    {
+        case ESTADO_BT_CONTROL:
+            RGB_Azul();          // Azul fijo
+            break;
+
+        case ESTADO_AUTO:
+            RGB_Verde();         // Verde fijo
+            break;
+
+        case ESTADO_ESPERA:
+            RGB_Amarillo();      // Luego lo hacemos intermitente
+            break;
+
+        case ESTADO_BATERIA_BAJA:
+            RGB_Rojo();          // Luego intermitente
+            break;
+
+        case ESTADO_BT_SIN_EMPAREJAR:
+            RGB_Morado();        // Luego intermitente
+            break;
+
+        case ESTADO_VICTORIA:
+            RGB_Verde();         // Luego parpadeo rápido
+            break;
+
+        case ESTADO_DERROTA:
+            RGB_Rojo();          // Rojo fijo
+            break;
+
+        case ESTADO_IMPACTO:
+            RGB_Blanco();        // Blanco breve
+            break;
+
+        default:
+            RGB_Off();
+            break;
+    }
 }
 
 /* USER CODE END 4 */
