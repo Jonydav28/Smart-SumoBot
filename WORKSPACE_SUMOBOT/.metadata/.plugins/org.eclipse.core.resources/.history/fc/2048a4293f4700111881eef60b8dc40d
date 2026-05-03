@@ -85,19 +85,11 @@ uint16_t adc_sharp = 0;
 #define ESTADO_DERROTA           6
 #define ESTADO_IMPACTO           7
 
-#define BAT_OK_MV        6000
-#define BAT_BAJA_MV      5600
-#define BAT_CRITICA_MV   5200
-
-
 uint8_t estado_rgb = ESTADO_ESPERA;
 uint32_t tiempo_rgb = 0;
 uint8_t rgb_toggle = 0;
 uint32_t tiempo_impacto_rgb = 0;
 uint8_t impacto_activo = 0;
-
-uint8_t aviso_bateria_emitido = 0;
-
 
 /* USER CODE END PV */
 
@@ -163,10 +155,7 @@ void RGB_Impacto_Breve(void);
 uint8_t INA219_Init(void);
 uint16_t INA219_ReadBusVoltage_mV(void);
 int16_t INA219_ReadCurrent_mA_x10(void);
-
-void verificar_bateria(void);
-void OLED_Mostrar_Bateria(uint16_t voltaje_mV, int16_t corriente_x10, uint8_t estado_bateria);
-
+void OLED_Mostrar_INA219(void);
 
 
 
@@ -466,7 +455,6 @@ int main(void)
 	    HAL_Delay(1000);
 */
  /*Prueba de LED en diferentes estados con OLED*/
-/*
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: ESPERA", Font_7x10, White);
@@ -581,16 +569,6 @@ int main(void)
 
 	    RGB_Off();
 	    HAL_Delay(500);
-*/
-/*Implementación y prueba del INA219*/
-
-	    verificar_bateria();
-
-	    for (int i = 0; i < 100; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
   }
 
   /* USER CODE END 3 */
@@ -1988,92 +1966,28 @@ int16_t INA219_ReadCurrent_mA_x10(void)
     return (int16_t)raw_u;
 }
 
-void OLED_Mostrar_Bateria(uint16_t voltaje_mV, int16_t corriente_x10, uint8_t estado_bateria)
+void OLED_Mostrar_INA219(void)
 {
     char linea[24];
+
+    uint16_t voltaje_mV = INA219_ReadBusVoltage_mV();
+    int16_t corriente_x10 = INA219_ReadCurrent_mA_x10();
 
     ssd1306_Fill(Black);
 
     ssd1306_SetCursor(0, 0);
-    ssd1306_WriteString("MONITOR BATERIA", Font_7x10, White);
+    ssd1306_WriteString("INA219 MONITOR", Font_7x10, White);
 
-    ssd1306_SetCursor(0, 16);
+    ssd1306_SetCursor(0, 18);
     sprintf(linea, "V: %u.%03u V", voltaje_mV / 1000, voltaje_mV % 1000);
     ssd1306_WriteString(linea, Font_7x10, White);
 
-    ssd1306_SetCursor(0, 30);
+    ssd1306_SetCursor(0, 36);
     sprintf(linea, "I: %d.%d mA", corriente_x10 / 10, corriente_x10 % 10);
     ssd1306_WriteString(linea, Font_7x10, White);
 
-    ssd1306_SetCursor(0, 48);
-
-    if (estado_bateria == 0)
-    {
-        ssd1306_WriteString("Estado: OK", Font_7x10, White);
-    }
-    else if (estado_bateria == 1)
-    {
-        ssd1306_WriteString("Estado: MEDIA", Font_7x10, White);
-    }
-    else if (estado_bateria == 2)
-    {
-        ssd1306_WriteString("Estado: BAJA", Font_7x10, White);
-    }
-    else
-    {
-        ssd1306_WriteString("Estado: CRITICA", Font_7x10, White);
-    }
-
     ssd1306_UpdateScreen();
 }
-
-
-void verificar_bateria(void)
-{
-    uint16_t voltaje_mV = INA219_ReadBusVoltage_mV();
-    int16_t corriente_x10 = INA219_ReadCurrent_mA_x10();
-
-    uint8_t estado_bateria = 0;
-
-    if (voltaje_mV >= BAT_OK_MV)
-    {
-        estado_bateria = 0; // OK
-        aviso_bateria_emitido = 0;
-    }
-    else if (voltaje_mV >= BAT_BAJA_MV)
-    {
-        estado_bateria = 1; // MEDIA
-        aviso_bateria_emitido = 0;
-    }
-    else if (voltaje_mV >= BAT_CRITICA_MV)
-    {
-        estado_bateria = 2; // BAJA
-        RGB_SetEstado(ESTADO_BATERIA_BAJA);
-
-        if (aviso_bateria_emitido == 0)
-        {
-            buzzer_bateria_baja();
-            aviso_bateria_emitido = 1;
-        }
-    }
-    else
-    {
-        estado_bateria = 3; // CRITICA
-        RGB_SetEstado(ESTADO_BATERIA_BAJA);
-
-        if (aviso_bateria_emitido == 0)
-        {
-            buzzer_bateria_baja();
-            aviso_bateria_emitido = 1;
-        }
-
-        mover_robot(0, 0); // opcional: detener motores por seguridad
-    }
-
-    OLED_Mostrar_Bateria(voltaje_mV, corriente_x10, estado_bateria);
-}
-
-
 
 /* USER CODE END 4 */
 
