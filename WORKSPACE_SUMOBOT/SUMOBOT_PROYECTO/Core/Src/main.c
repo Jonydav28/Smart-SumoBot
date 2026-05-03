@@ -63,10 +63,10 @@ uint32_t distancia_us_der = 0;
 uint16_t adc_sharp = 0;
 
 #define DIST_LATERAL_CM     45
-#define SHARP_UMBRAL_ADC    1200
+#define SHARP_UMBRAL_ADC    120
 
 #define VEL_BUSQUEDA        45
-#define VEL_ATAQUE          90
+#define VEL_ATAQUE          95
 #define VEL_GIRO_BAJA       45
 #define VEL_GIRO_ALTA       85
 
@@ -149,9 +149,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  	 /*
-	     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
+	  /*Led indicador de STM*/
+
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+/* Prueba motores sin sensores */
+
+	  /*
 	     // Adelante
 	     mover_robot(100, 100);
 	     for (int i = 0; i < 100; i++)
@@ -207,14 +211,69 @@ int main(void)
 	         actualizar_rampa();
 	         HAL_Delay(10);
 	     }
-	     */
-	     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
-	     modo_autonomo_basico();
+*/
 
-	     actualizar_rampa();
+/*Prueba Sharp*/
+/*
+	    adc_sharp = leer_sharp_adc();
 
-	     HAL_Delay(20);
+	    if (adc_sharp > SHARP_UMBRAL_ADC)
+	    {
+	        mover_robot(80, 80);   // objeto al frente
+	    }
+	    else
+	    {
+	        mover_robot(0, 0);     // no detecta
+	    }
+
+	    actualizar_rampa();
+	    HAL_Delay(20);
+	    }
+*/
+/*Prueba Ultrasonico Izquierdo*/
+/*
+	    distancia_us_izq = medir_ultrasonico(TRIG_US_IZQ_GPIO_Port, TRIG_US_IZQ_Pin,
+	                                         ECHO_US_IZQ_GPIO_Port, ECHO_US_IZQ_Pin);
+
+	    if (distancia_us_izq < 45)
+	    {
+	        mover_robot(40, 80);   // gira hacia izquierda
+	    }
+	    else
+	    {
+	        mover_robot(0, 0);
+	    }
+
+	    actualizar_rampa();
+	    HAL_Delay(60);
+*/
+ /*Prueba Ultrasonico Derecho*/
+/*
+	    distancia_us_der = medir_ultrasonico(TRIG_US_DER_GPIO_Port, TRIG_US_DER_Pin,
+	                                         ECHO_US_DER_GPIO_Port, ECHO_US_DER_Pin);
+
+	    if (distancia_us_der < 45)
+	    {
+	        mover_robot(80, 40);   // gira hacia derecha
+	    }
+	    else
+	    {
+	        mover_robot(0, 0);
+	    }
+
+	    actualizar_rampa();
+	    HAL_Delay(60);
+	    */
+/*Integracion de los 3 sensores*/
+	    modo_autonomo_basico();
+
+	    for (int i = 0; i < 5; i++)
+	    {
+	        actualizar_rampa();
+	        HAL_Delay(10);
+	    }
+
   }
 
   /* USER CODE END 3 */
@@ -640,49 +699,56 @@ uint16_t leer_sharp_adc(void)
 
 void modo_autonomo_basico(void)
 {
-    // Leer ultrasónico izquierdo
+    adc_sharp = leer_sharp_adc();
+
     distancia_us_izq = medir_ultrasonico(TRIG_US_IZQ_GPIO_Port, TRIG_US_IZQ_Pin,
                                          ECHO_US_IZQ_GPIO_Port, ECHO_US_IZQ_Pin);
 
-    HAL_Delay(40);
+    HAL_Delay(50);
 
-    // Leer ultrasónico derecho
     distancia_us_der = medir_ultrasonico(TRIG_US_DER_GPIO_Port, TRIG_US_DER_Pin,
                                          ECHO_US_DER_GPIO_Port, ECHO_US_DER_Pin);
 
-    // Leer Sharp central
-    adc_sharp = leer_sharp_adc();
-
-    /*
-      Prioridad:
-      1. Enemigo al frente con Sharp
-      2. Enemigo a la izquierda
-      3. Enemigo a la derecha
-      4. Buscar girando
-    */
+    uint8_t enemigo_frente = 0;
+    uint8_t enemigo_izq = 0;
+    uint8_t enemigo_der = 0;
 
     if (adc_sharp > SHARP_UMBRAL_ADC)
     {
-        // Enemigo al frente: atacar recto
+        enemigo_frente = 1;
+    }
+
+    if (distancia_us_izq > 2 && distancia_us_izq < DIST_LATERAL_CM)
+    {
+        enemigo_izq = 1;
+    }
+
+    if (distancia_us_der > 2 && distancia_us_der < DIST_LATERAL_CM)
+    {
+        enemigo_der = 1;
+    }
+
+    if (enemigo_frente)
+    {
         mover_robot(VEL_ATAQUE, VEL_ATAQUE);
     }
-    else if (distancia_us_izq < DIST_LATERAL_CM)
+    else if (enemigo_izq && !enemigo_der)
     {
-        // Enemigo hacia la izquierda: girar hacia la izquierda
         mover_robot(VEL_GIRO_BAJA, VEL_GIRO_ALTA);
     }
-    else if (distancia_us_der < DIST_LATERAL_CM)
+    else if (enemigo_der && !enemigo_izq)
     {
-        // Enemigo hacia la derecha: girar hacia la derecha
         mover_robot(VEL_GIRO_ALTA, VEL_GIRO_BAJA);
+    }
+    else if (enemigo_izq && enemigo_der)
+    {
+        mover_robot(VEL_ATAQUE, VEL_ATAQUE);
     }
     else
     {
-        // No detecta enemigo: búsqueda girando sobre su eje
         mover_robot(VEL_BUSQUEDA, -VEL_BUSQUEDA);
     }
 }
-
 
 /* USER CODE END 4 */
 
