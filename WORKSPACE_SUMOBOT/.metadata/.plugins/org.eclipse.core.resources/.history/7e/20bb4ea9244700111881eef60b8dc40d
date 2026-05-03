@@ -836,37 +836,45 @@ void OLED_Espera_Frame(uint8_t ojos_abiertos)
 {
     ssd1306_Fill(Black);
 
+    // Cabeza grande
+    ssd1306_DrawRectangle(8, 4, 120, 63, White);
+    ssd1306_DrawRectangle(10, 6, 118, 61, White);
+
+    // Antenas
+    ssd1306_Line(35, 8, 25, 3, White);
+    ssd1306_Line(93, 8, 103, 3, White);
+    ssd1306_FillCircle(25, 4, 2, White);
+    ssd1306_FillCircle(103, 4, 2, White);
+
     if (ojos_abiertos)
     {
-        // Ojo izquierdo grande
-        ssd1306_FillCircle(42, 31, 13, White);
-        ssd1306_FillCircle(42, 31, 8, Black);
-        ssd1306_FillCircle(37, 25, 3, White);
-        ssd1306_FillCircle(47, 34, 2, White);
+        // Ojos grandes
+        ssd1306_DrawRectangle(25, 22, 50, 42, White);
+        ssd1306_DrawRectangle(78, 22, 103, 42, White);
 
-        // Ojo derecho grande
-        ssd1306_FillCircle(86, 31, 13, White);
-        ssd1306_FillCircle(86, 31, 8, Black);
-        ssd1306_FillCircle(81, 25, 3, White);
-        ssd1306_FillCircle(91, 34, 2, White);
+        // Brillo de ojos
+        ssd1306_FillCircle(32, 28, 3, White);
+        ssd1306_FillCircle(85, 28, 3, White);
+
+        // Pupilas
+        ssd1306_FillRectangle(37, 31, 47, 39, White);
+        ssd1306_FillRectangle(90, 31, 100, 39, White);
     }
     else
     {
-        // Ojos cerrados tipo anime
-        ssd1306_DrawArc(42, 31, 12, 200, 140, White);
-        ssd1306_DrawArc(86, 31, 12, 200, 140, White);
-        ssd1306_Line(30, 31, 54, 31, White);
-        ssd1306_Line(74, 31, 98, 31, White);
+        // Ojos cerrados
+        ssd1306_Line(25, 32, 50, 32, White);
+        ssd1306_Line(78, 32, 103, 32, White);
+        ssd1306_Line(25, 33, 50, 33, White);
+        ssd1306_Line(78, 33, 103, 33, White);
     }
 
-    // Mejillas
-    ssd1306_Line(22, 45, 30, 42, White);
-    ssd1306_Line(24, 49, 32, 46, White);
-    ssd1306_Line(98, 42, 106, 45, White);
-    ssd1306_Line(96, 46, 104, 49, White);
+    // Nariz / panel central
+    ssd1306_DrawRectangle(60, 38, 68, 45, White);
 
-    // Boca suave
-    ssd1306_DrawArc(64, 46, 10, 20, 140, White);
+    // Boca neutra
+    ssd1306_Line(48, 53, 80, 53, White);
+    ssd1306_Line(48, 54, 80, 54, White);
 
     ssd1306_UpdateScreen();
 }
@@ -875,29 +883,34 @@ void OLED_Busqueda_Frame(int desplazamiento)
 {
     ssd1306_Fill(Black);
 
-    // Ojo izquierdo
-    ssd1306_FillCircle(42, 31, 14, White);
-    ssd1306_FillCircle(42, 31, 9, Black);
-    ssd1306_FillCircle(42 + desplazamiento, 31, 5, White);
-    ssd1306_FillCircle(39 + desplazamiento, 27, 2, Black);
+    // Cabeza grande
+    ssd1306_DrawRectangle(6, 4, 122, 63, White);
+    ssd1306_DrawRectangle(8, 6, 120, 61, White);
 
-    // Ojo derecho
-    ssd1306_FillCircle(86, 31, 14, White);
-    ssd1306_FillCircle(86, 31, 9, Black);
-    ssd1306_FillCircle(86 + desplazamiento, 31, 5, White);
-    ssd1306_FillCircle(83 + desplazamiento, 27, 2, Black);
+    // Radar superior
+    ssd1306_Line(64, 8, 64, 3, White);
+    ssd1306_DrawCircle(64, 4, 2, White);
 
-    // Cejas curiosas
-    ssd1306_Line(28, 14, 50, 18, White);
-    ssd1306_Line(78, 18, 100, 14, White);
+    // Ojos grandes
+    ssd1306_DrawCircle(40, 32, 15, White);
+    ssd1306_DrawCircle(88, 32, 15, White);
 
-    // Boca pequeña
-    ssd1306_DrawCircle(64, 52, 4, White);
+    // Pupilas móviles
+    ssd1306_FillCircle(40 + desplazamiento, 32, 5, White);
+    ssd1306_FillCircle(88 + desplazamiento, 32, 5, White);
 
-    // Detalle de pregunta
-    ssd1306_DrawArc(112, 18, 5, 230, 220, White);
-    ssd1306_DrawPixel(112, 28, White);
-    ssd1306_DrawPixel(112, 29, White);
+    // Brillo de ojos
+    ssd1306_DrawPixel(37 + desplazamiento, 29, Black);
+    ssd1306_DrawPixel(85 + desplazamiento, 29, Black);
+
+    // Detalle tipo escaneo
+    ssd1306_Line(15, 14, 35, 14, White);
+    ssd1306_Line(93, 14, 113, 14, White);
+    ssd1306_Line(18, 18, 30, 18, White);
+    ssd1306_Line(98, 18, 110, 18, White);
+
+    // Boca pequeña curiosa
+    ssd1306_DrawRectangle(55, 51, 73, 57, White);
 
     ssd1306_UpdateScreen();
 }
@@ -906,42 +919,53 @@ void OLED_Ataque_Frame(uint8_t boca_abierta)
 {
     ssd1306_Fill(Black);
 
-    // Cejas fuertes
-    ssd1306_Line(24, 16, 56, 27, White);
-    ssd1306_Line(24, 17, 56, 28, White);
-    ssd1306_Line(72, 28, 104, 17, White);
-    ssd1306_Line(72, 27, 104, 16, White);
+    // Cabeza grande
+    ssd1306_DrawRectangle(4, 4, 124, 63, White);
+    ssd1306_DrawRectangle(6, 6, 122, 61, White);
 
-    // Ojos intensos
-    ssd1306_FillCircle(42, 34, 13, White);
-    ssd1306_FillCircle(42, 34, 7, Black);
-    ssd1306_FillCircle(47, 35, 4, White);
+    // Cejas agresivas gruesas
+    ssd1306_Line(20, 18, 56, 30, White);
+    ssd1306_Line(20, 19, 56, 31, White);
+    ssd1306_Line(72, 30, 108, 18, White);
+    ssd1306_Line(72, 31, 108, 19, White);
 
-    ssd1306_FillCircle(86, 34, 13, White);
-    ssd1306_FillCircle(86, 34, 7, Black);
-    ssd1306_FillCircle(81, 35, 4, White);
+    // Ojos agresivos
+    ssd1306_FillRectangle(27, 34, 54, 45, White);
+    ssd1306_FillRectangle(74, 34, 101, 45, White);
 
-    // Cortes negros para mirada agresiva
-    ssd1306_Line(28, 23, 56, 35, Black);
-    ssd1306_Line(72, 35, 100, 23, Black);
+    // Cortes negros para que parezcan ojos inclinados
+    ssd1306_Line(27, 34, 54, 45, Black);
+    ssd1306_Line(74, 45, 101, 34, Black);
+
+    // Mejillas / placas
+    ssd1306_Line(14, 48, 34, 52, White);
+    ssd1306_Line(94, 52, 114, 48, White);
 
     if (boca_abierta)
     {
-        // Boca gritando
-        ssd1306_DrawArc(64, 51, 12, 0, 180, White);
-        ssd1306_Line(52, 51, 76, 51, White);
-        ssd1306_Line(56, 55, 72, 55, White);
+        // Boca gritando grande
+        ssd1306_DrawRectangle(48, 49, 80, 62, White);
+        ssd1306_Line(52, 53, 76, 53, White);
+        ssd1306_Line(52, 57, 76, 57, White);
+
+        // Dientes
+        ssd1306_Line(56, 49, 56, 62, White);
+        ssd1306_Line(64, 49, 64, 62, White);
+        ssd1306_Line(72, 49, 72, 62, White);
     }
     else
     {
-        // Boca decidida
-        ssd1306_Line(50, 53, 78, 53, White);
-        ssd1306_Line(50, 54, 78, 54, White);
+        // Boca seria gruesa
+        ssd1306_Line(44, 55, 84, 55, White);
+        ssd1306_Line(44, 56, 84, 56, White);
+        ssd1306_Line(44, 57, 84, 57, White);
     }
 
-    // Líneas de velocidad
-    ssd1306_Line(4, 30, 18, 30, White);
-    ssd1306_Line(110, 30, 124, 30, White);
+    // Rayas de velocidad
+    ssd1306_Line(2, 20, 14, 20, White);
+    ssd1306_Line(2, 26, 18, 26, White);
+    ssd1306_Line(110, 26, 126, 26, White);
+    ssd1306_Line(114, 20, 126, 20, White);
 
     ssd1306_UpdateScreen();
 }
@@ -950,36 +974,44 @@ void OLED_Impacto_Frame(uint8_t frame)
 {
     ssd1306_Fill(Black);
 
+    // Cabeza temblando
     uint8_t dx = (frame % 2 == 0) ? 0 : 2;
 
-    // Ojos en espiral / impacto
-    ssd1306_DrawCircle(42 + dx, 30, 13, White);
-    ssd1306_DrawCircle(42 + dx, 30, 7, White);
-    ssd1306_DrawCircle(86 + dx, 30, 13, White);
-    ssd1306_DrawCircle(86 + dx, 30, 7, White);
+    ssd1306_DrawRectangle(6 + dx, 5, 122 + dx, 63, White);
+    ssd1306_DrawRectangle(8 + dx, 7, 120 + dx, 61, White);
 
-    // Ojos tipo mareado
-    ssd1306_Line(32 + dx, 22, 52 + dx, 38, White);
-    ssd1306_Line(52 + dx, 22, 32 + dx, 38, White);
+    // Ojo izquierdo en X grande
+    ssd1306_Line(26 + dx, 22, 54 + dx, 48, White);
+    ssd1306_Line(54 + dx, 22, 26 + dx, 48, White);
+    ssd1306_Line(27 + dx, 22, 55 + dx, 48, White);
+    ssd1306_Line(55 + dx, 22, 27 + dx, 48, White);
 
-    ssd1306_Line(76 + dx, 22, 96 + dx, 38, White);
-    ssd1306_Line(96 + dx, 22, 76 + dx, 38, White);
+    // Ojo derecho en X grande
+    ssd1306_Line(74 + dx, 22, 102 + dx, 48, White);
+    ssd1306_Line(102 + dx, 22, 74 + dx, 48, White);
+    ssd1306_Line(75 + dx, 22, 103 + dx, 48, White);
+    ssd1306_Line(103 + dx, 22, 75 + dx, 48, White);
 
-    // Boca abierta
+    // Boca sorpresa
     if (frame % 2 == 0)
     {
-        ssd1306_DrawCircle(64 + dx, 52, 7, White);
+        ssd1306_DrawCircle(64 + dx, 55, 6, White);
     }
     else
     {
-        ssd1306_DrawCircle(64 + dx, 52, 10, White);
+        ssd1306_DrawCircle(64 + dx, 55, 9, White);
     }
 
-    // Chispas
-    ssd1306_Line(8, 12, 20, 24, White);
-    ssd1306_Line(20, 12, 8, 24, White);
-    ssd1306_Line(108, 12, 120, 24, White);
-    ssd1306_Line(120, 12, 108, 24, White);
+    // Chispas grandes
+    ssd1306_Line(4, 16, 18, 16, White);
+    ssd1306_Line(11, 9, 11, 23, White);
+    ssd1306_Line(6, 11, 16, 21, White);
+    ssd1306_Line(16, 11, 6, 21, White);
+
+    ssd1306_Line(110, 16, 124, 16, White);
+    ssd1306_Line(117, 9, 117, 23, White);
+    ssd1306_Line(112, 11, 122, 21, White);
+    ssd1306_Line(122, 11, 112, 21, White);
 
     ssd1306_UpdateScreen();
 }
@@ -988,71 +1020,42 @@ void OLED_Victoria_Frame(uint8_t frame)
 {
     ssd1306_Fill(Black);
 
-    // Ojo izquierdo tipo estrella
-    ssd1306_Line(42, 18, 46, 28, White);
-    ssd1306_Line(46, 28, 56, 28, White);
-    ssd1306_Line(56, 28, 48, 34, White);
-    ssd1306_Line(48, 34, 52, 44, White);
-    ssd1306_Line(52, 44, 42, 38, White);
-    ssd1306_Line(42, 38, 32, 44, White);
-    ssd1306_Line(32, 44, 36, 34, White);
-    ssd1306_Line(36, 34, 28, 28, White);
-    ssd1306_Line(28, 28, 38, 28, White);
-    ssd1306_Line(38, 28, 42, 18, White);
+    // Cabeza grande
+    ssd1306_DrawRectangle(8, 6, 120, 63, White);
+    ssd1306_DrawRectangle(10, 8, 118, 61, White);
 
-    // Ojo derecho tipo estrella
-    ssd1306_Line(86, 18, 90, 28, White);
-    ssd1306_Line(90, 28, 100, 28, White);
-    ssd1306_Line(100, 28, 92, 34, White);
-    ssd1306_Line(92, 34, 96, 44, White);
-    ssd1306_Line(96, 44, 86, 38, White);
-    ssd1306_Line(86, 38, 76, 44, White);
-    ssd1306_Line(76, 44, 80, 34, White);
-    ssd1306_Line(80, 34, 72, 28, White);
-    ssd1306_Line(72, 28, 82, 28, White);
-    ssd1306_Line(82, 28, 86, 18, White);
+    // Ojos felices grandes
+    ssd1306_Line(26, 36, 38, 24, White);
+    ssd1306_Line(38, 24, 50, 36, White);
+    ssd1306_Line(78, 36, 90, 24, White);
+    ssd1306_Line(90, 24, 102, 36, White);
 
-    // Mejillas felices
-    ssd1306_Line(16, 45, 26, 42, White);
-    ssd1306_Line(18, 50, 28, 47, White);
-    ssd1306_Line(102, 42, 112, 45, White);
-    ssd1306_Line(100, 47, 110, 50, White);
+    // Sonrisa grande
+    ssd1306_Line(42, 46, 52, 57, White);
+    ssd1306_Line(52, 57, 76, 57, White);
+    ssd1306_Line(76, 57, 86, 46, White);
 
-    // Sonrisa grande tipo anime
-    ssd1306_DrawArc(64, 43, 22, 20, 140, White);
-    ssd1306_DrawArc(64, 44, 22, 20, 140, White);
+    ssd1306_Line(44, 47, 53, 55, White);
+    ssd1306_Line(53, 55, 75, 55, White);
+    ssd1306_Line(75, 55, 84, 47, White);
 
-    // Boca abierta feliz debajo de la sonrisa
-    ssd1306_DrawArc(64, 48, 14, 20, 140, White);
-    ssd1306_Line(50, 48, 78, 48, White);
-
-    // Detalle de lengua / brillo de boca
+    // Brazos celebrando
     if (frame % 2 == 0)
     {
-        ssd1306_Line(56, 55, 72, 55, White);
+    	ssd1306_Line(10, 28, 3, 18, White);
+    	ssd1306_Line(118, 28, 125, 18, White);
     }
     else
     {
-        ssd1306_Line(58, 56, 70, 56, White);
+    	ssd1306_Line(10, 35, 3, 45, White);
+    	ssd1306_Line(118, 35, 125, 45, White);
     }
 
-    // Estrellitas alrededor
-    if (frame % 2 == 0)
-    {
-        ssd1306_Line(10, 12, 22, 12, White);
-        ssd1306_Line(16, 6, 16, 18, White);
-
-        ssd1306_Line(106, 12, 118, 12, White);
-        ssd1306_Line(112, 6, 112, 18, White);
-    }
-    else
-    {
-        ssd1306_Line(14, 18, 24, 18, White);
-        ssd1306_Line(19, 13, 19, 23, White);
-
-        ssd1306_Line(102, 18, 112, 18, White);
-        ssd1306_Line(107, 13, 107, 23, White);
-    }
+    // Confetti
+    ssd1306_FillRectangle(5, 8, 7, 10, White);
+    ssd1306_FillRectangle(118, 10, 120, 12, White);
+    ssd1306_FillRectangle(15, 52, 17, 54, White);
+    ssd1306_FillRectangle(110, 50, 112, 52, White);
 
     ssd1306_UpdateScreen();
 }
@@ -1061,31 +1064,41 @@ void OLED_Derrota_Frame(uint8_t frame)
 {
     ssd1306_Fill(Black);
 
-    // Ojos tristes
-    ssd1306_FillCircle(42, 32, 12, White);
-    ssd1306_FillCircle(42, 32, 7, Black);
-    ssd1306_FillCircle(45, 36, 3, White);
+    // Cabeza caída
+    ssd1306_DrawRectangle(8, 7, 120, 63, White);
+    ssd1306_DrawRectangle(10, 9, 118, 61, White);
 
-    ssd1306_FillCircle(86, 32, 12, White);
-    ssd1306_FillCircle(86, 32, 7, Black);
-    ssd1306_FillCircle(89, 36, 3, White);
+    // Ojos caídos
+    ssd1306_Line(26, 32, 52, 25, White);
+    ssd1306_Line(76, 25, 102, 32, White);
 
-    // Cejas caídas
-    ssd1306_Line(28, 18, 54, 14, White);
-    ssd1306_Line(74, 14, 100, 18, White);
+    // Pupilas pequeñas
+    ssd1306_FillCircle(40, 36, 3, White);
+    ssd1306_FillCircle(88, 36, 3, White);
 
-    // Lágrima
+    // Lágrima animada
     if (frame % 2 == 0)
     {
-        ssd1306_DrawCircle(31, 43, 2, White);
+        ssd1306_DrawCircle(45, 43, 2, White);
     }
     else
     {
-        ssd1306_DrawCircle(31, 51, 2, White);
+        ssd1306_DrawCircle(45, 51, 2, White);
     }
 
-    // Boca triste
-    ssd1306_DrawArc(64, 58, 15, 200, 140, White);
+    // Boca triste grande
+    ssd1306_Line(42, 58, 52, 48, White);
+    ssd1306_Line(52, 48, 76, 48, White);
+    ssd1306_Line(76, 48, 86, 58, White);
+
+    ssd1306_Line(44, 58, 53, 50, White);
+    ssd1306_Line(53, 50, 75, 50, White);
+    ssd1306_Line(75, 50, 84, 58, White);
+
+    // Señal de daño
+    ssd1306_Line(105, 15, 112, 8, White);
+    ssd1306_Line(112, 8, 116, 16, White);
+    ssd1306_Line(116, 16, 122, 10, White);
 
     ssd1306_UpdateScreen();
 }
@@ -1094,76 +1107,95 @@ void OLED_Animacion_Espera(void)
 {
     OLED_Espera_Frame(1);
     HAL_Delay(700);
+
     OLED_Espera_Frame(0);
     HAL_Delay(120);
+
     OLED_Espera_Frame(1);
-    HAL_Delay(500);
+    HAL_Delay(700);
 }
 
 void OLED_Animacion_Busqueda(void)
 {
-    OLED_Busqueda_Frame(-7);
-    HAL_Delay(120);
-    OLED_Busqueda_Frame(-3);
-    HAL_Delay(120);
+    OLED_Busqueda_Frame(-8);
+    HAL_Delay(100);
+
+    OLED_Busqueda_Frame(-4);
+    HAL_Delay(100);
+
     OLED_Busqueda_Frame(0);
-    HAL_Delay(120);
-    OLED_Busqueda_Frame(3);
-    HAL_Delay(120);
-    OLED_Busqueda_Frame(7);
-    HAL_Delay(120);
+    HAL_Delay(100);
+
+    OLED_Busqueda_Frame(4);
+    HAL_Delay(100);
+
+    OLED_Busqueda_Frame(8);
+    HAL_Delay(100);
+
+    OLED_Busqueda_Frame(4);
+    HAL_Delay(100);
+
     OLED_Busqueda_Frame(0);
-    HAL_Delay(120);
+    HAL_Delay(100);
+
+    OLED_Busqueda_Frame(-4);
+    HAL_Delay(100);
 }
 
 void OLED_Animacion_Ataque(void)
 {
     OLED_Ataque_Frame(0);
-    HAL_Delay(120);
+    HAL_Delay(150);
+
     OLED_Ataque_Frame(1);
-    HAL_Delay(120);
+    HAL_Delay(150);
+
     OLED_Ataque_Frame(0);
-    HAL_Delay(120);
+    HAL_Delay(150);
+
     OLED_Ataque_Frame(1);
-    HAL_Delay(120);
+    HAL_Delay(150);
 }
 
 void OLED_Animacion_Impacto(void)
 {
     OLED_Impacto_Frame(0);
-    HAL_Delay(120);
+    HAL_Delay(150);
+
     OLED_Impacto_Frame(1);
-    HAL_Delay(120);
+    HAL_Delay(150);
+
     OLED_Impacto_Frame(0);
-    HAL_Delay(120);
-    OLED_Impacto_Frame(1);
-    HAL_Delay(120);
+    HAL_Delay(150);
 }
 
 void OLED_Animacion_Victoria(void)
 {
     OLED_Victoria_Frame(0);
-    HAL_Delay(180);
+    HAL_Delay(200);
 
     OLED_Victoria_Frame(1);
-    HAL_Delay(180);
+    HAL_Delay(200);
 
     OLED_Victoria_Frame(0);
-    HAL_Delay(180);
+    HAL_Delay(200);
 
     OLED_Victoria_Frame(1);
-    HAL_Delay(180);
+    HAL_Delay(200);
 }
 
 void OLED_Animacion_Derrota(void)
 {
     OLED_Derrota_Frame(0);
-    HAL_Delay(220);
+    HAL_Delay(250);
+
     OLED_Derrota_Frame(1);
-    HAL_Delay(220);
+    HAL_Delay(250);
+
     OLED_Derrota_Frame(0);
-    HAL_Delay(220);
+    HAL_Delay(250);
 }
+
 /* USER CODE END 4 */
 
 /**

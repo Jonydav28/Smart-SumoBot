@@ -988,70 +988,40 @@ void OLED_Victoria_Frame(uint8_t frame)
 {
     ssd1306_Fill(Black);
 
-    // Ojo izquierdo tipo estrella
-    ssd1306_Line(42, 18, 46, 28, White);
-    ssd1306_Line(46, 28, 56, 28, White);
-    ssd1306_Line(56, 28, 48, 34, White);
-    ssd1306_Line(48, 34, 52, 44, White);
-    ssd1306_Line(52, 44, 42, 38, White);
-    ssd1306_Line(42, 38, 32, 44, White);
-    ssd1306_Line(32, 44, 36, 34, White);
-    ssd1306_Line(36, 34, 28, 28, White);
-    ssd1306_Line(28, 28, 38, 28, White);
-    ssd1306_Line(38, 28, 42, 18, White);
+    // Ojos felices cerrados
+    ssd1306_DrawArc(42, 31, 14, 200, 140, White);
+    ssd1306_DrawArc(86, 31, 14, 200, 140, White);
 
-    // Ojo derecho tipo estrella
-    ssd1306_Line(86, 18, 90, 28, White);
-    ssd1306_Line(90, 28, 100, 28, White);
-    ssd1306_Line(100, 28, 92, 34, White);
-    ssd1306_Line(92, 34, 96, 44, White);
-    ssd1306_Line(96, 44, 86, 38, White);
-    ssd1306_Line(86, 38, 76, 44, White);
-    ssd1306_Line(76, 44, 80, 34, White);
-    ssd1306_Line(80, 34, 72, 28, White);
-    ssd1306_Line(72, 28, 82, 28, White);
-    ssd1306_Line(82, 28, 86, 18, White);
+    ssd1306_Line(28, 31, 42, 22, White);
+    ssd1306_Line(42, 22, 56, 31, White);
 
-    // Mejillas felices
-    ssd1306_Line(16, 45, 26, 42, White);
-    ssd1306_Line(18, 50, 28, 47, White);
-    ssd1306_Line(102, 42, 112, 45, White);
-    ssd1306_Line(100, 47, 110, 50, White);
+    ssd1306_Line(72, 31, 86, 22, White);
+    ssd1306_Line(86, 22, 100, 31, White);
 
-    // Sonrisa grande tipo anime
-    ssd1306_DrawArc(64, 43, 22, 20, 140, White);
-    ssd1306_DrawArc(64, 44, 22, 20, 140, White);
+    // Sonrisa grande
+    ssd1306_DrawArc(64, 43, 18, 20, 140, White);
+    ssd1306_DrawArc(64, 44, 18, 20, 140, White);
 
-    // Boca abierta feliz debajo de la sonrisa
-    ssd1306_DrawArc(64, 48, 14, 20, 140, White);
-    ssd1306_Line(50, 48, 78, 48, White);
+    // Mejillas
+    ssd1306_Line(20, 43, 30, 40, White);
+    ssd1306_Line(22, 47, 32, 44, White);
+    ssd1306_Line(98, 40, 108, 43, White);
+    ssd1306_Line(96, 44, 106, 47, White);
 
-    // Detalle de lengua / brillo de boca
+    // Estrellitas alternadas
     if (frame % 2 == 0)
     {
-        ssd1306_Line(56, 55, 72, 55, White);
+        ssd1306_Line(12, 12, 20, 12, White);
+        ssd1306_Line(16, 8, 16, 16, White);
+        ssd1306_Line(108, 14, 116, 14, White);
+        ssd1306_Line(112, 10, 112, 18, White);
     }
     else
     {
-        ssd1306_Line(58, 56, 70, 56, White);
-    }
-
-    // Estrellitas alrededor
-    if (frame % 2 == 0)
-    {
-        ssd1306_Line(10, 12, 22, 12, White);
-        ssd1306_Line(16, 6, 16, 18, White);
-
-        ssd1306_Line(106, 12, 118, 12, White);
-        ssd1306_Line(112, 6, 112, 18, White);
-    }
-    else
-    {
-        ssd1306_Line(14, 18, 24, 18, White);
-        ssd1306_Line(19, 13, 19, 23, White);
-
-        ssd1306_Line(102, 18, 112, 18, White);
-        ssd1306_Line(107, 13, 107, 23, White);
+        ssd1306_Line(18, 18, 26, 18, White);
+        ssd1306_Line(22, 14, 22, 22, White);
+        ssd1306_Line(102, 10, 110, 10, White);
+        ssd1306_Line(106, 6, 106, 14, White);
     }
 
     ssd1306_UpdateScreen();
@@ -1144,14 +1114,9 @@ void OLED_Animacion_Victoria(void)
 {
     OLED_Victoria_Frame(0);
     HAL_Delay(180);
-
     OLED_Victoria_Frame(1);
     HAL_Delay(180);
-
     OLED_Victoria_Frame(0);
-    HAL_Delay(180);
-
-    OLED_Victoria_Frame(1);
     HAL_Delay(180);
 }
 
