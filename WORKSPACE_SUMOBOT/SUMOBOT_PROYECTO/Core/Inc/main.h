@@ -81,6 +81,10 @@ void Error_Handler(void);
 #define ECHO_US_IZQ_GPIO_Port GPIOB
 #define ECHO_US_DER_Pin GPIO_PIN_15
 #define ECHO_US_DER_GPIO_Port GPIOB
+#define SCL_OLED_Pin GPIO_PIN_6
+#define SCL_OLED_GPIO_Port GPIOB
+#define SDA_OLED_Pin GPIO_PIN_7
+#define SDA_OLED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ssd1306.h"
+#include "ssd1306_fonts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +42,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
+I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -78,6 +81,7 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 void set_pwm(uint32_t canal, int duty);
 void motor_izquierdo(int velocidad);
@@ -91,6 +95,14 @@ uint32_t medir_ultrasonico(GPIO_TypeDef *TRIG_Port, uint16_t TRIG_Pin,
 
 uint16_t leer_sharp_adc(void);
 void modo_autonomo_basico(void);
+
+
+void OLED_Cara_Espera(void);
+void OLED_Cara_Ataque(void);
+void OLED_Cara_Busqueda(void);
+void OLED_Cara_Impacto(void);
+void OLED_Cara_Victoria(void);
+void OLED_Cara_Derrota(void);
 
 /* USER CODE END PFP */
 
@@ -131,11 +143,19 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
 
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+
+  /*OLED*/
+  ssd1306_Init();
+  ssd1306_Fill(Black);
+  ssd1306_UpdateScreen();
+
+  HAL_Delay(500);
 
   // Todo apagado al inicio
   mover_robot(0, 0);
@@ -266,14 +286,34 @@ int main(void)
 	    HAL_Delay(60);
 	    */
 /*Integracion de los 3 sensores*/
-	    modo_autonomo_basico();
+/*	    modo_autonomo_basico();
 
 	    for (int i = 0; i < 5; i++)
 	    {
 	        actualizar_rampa();
 	        HAL_Delay(10);
 	    }
+*/
 
+
+/*Prueba caras OLED*/
+	    OLED_Cara_Espera();
+	    HAL_Delay(1500);
+
+	    OLED_Cara_Busqueda();
+	    HAL_Delay(1500);
+
+	    OLED_Cara_Ataque();
+	    HAL_Delay(1500);
+
+	    OLED_Cara_Impacto();
+	    HAL_Delay(1500);
+
+	    OLED_Cara_Victoria();
+	    HAL_Delay(1500);
+
+	    OLED_Cara_Derrota();
+	    HAL_Delay(1500);
   }
 
   /* USER CODE END 3 */
@@ -369,6 +409,40 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
@@ -748,6 +822,129 @@ void modo_autonomo_basico(void)
     {
         mover_robot(VEL_BUSQUEDA, -VEL_BUSQUEDA);
     }
+}
+
+void OLED_Cara_Espera(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(34, 0);
+    ssd1306_WriteString("ESPERA", Font_7x10, White);
+
+    // Ojos
+    ssd1306_FillCircle(40, 30, 6, White);
+    ssd1306_FillCircle(88, 30, 6, White);
+
+    // Boca neutra
+    ssd1306_Line(52, 50, 76, 50, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Ataque(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(34, 0);
+    ssd1306_WriteString("ATAQUE", Font_7x10, White);
+
+    // Cejas agresivas
+    ssd1306_Line(28, 20, 52, 28, White);
+    ssd1306_Line(76, 28, 100, 20, White);
+
+    // Ojos
+    ssd1306_FillRectangle(34, 31, 46, 39, White);
+    ssd1306_FillRectangle(82, 31, 94, 39, White);
+
+    // Boca seria
+    ssd1306_Line(50, 52, 78, 52, White);
+    ssd1306_Line(50, 53, 78, 53, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Busqueda(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(24, 0);
+    ssd1306_WriteString("BUSCANDO", Font_7x10, White);
+
+    // Ojos mirando a un lado
+    ssd1306_DrawCircle(40, 32, 8, White);
+    ssd1306_DrawCircle(88, 32, 8, White);
+
+    ssd1306_FillCircle(44, 32, 3, White);
+    ssd1306_FillCircle(92, 32, 3, White);
+
+    // Boca pequeña
+    ssd1306_Line(58, 52, 70, 52, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Impacto(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(30, 0);
+    ssd1306_WriteString("IMPACTO", Font_7x10, White);
+
+    // Ojos en X
+    ssd1306_Line(32, 24, 48, 40, White);
+    ssd1306_Line(48, 24, 32, 40, White);
+
+    ssd1306_Line(80, 24, 96, 40, White);
+    ssd1306_Line(96, 24, 80, 40, White);
+
+    // Boca abierta
+    ssd1306_DrawCircle(64, 53, 7, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Victoria(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(30, 0);
+    ssd1306_WriteString("VICTORIA", Font_7x10, White);
+
+    // Ojos felices
+    ssd1306_Line(32, 30, 40, 24, White);
+    ssd1306_Line(40, 24, 48, 30, White);
+
+    ssd1306_Line(80, 30, 88, 24, White);
+    ssd1306_Line(88, 24, 96, 30, White);
+
+    // Sonrisa
+    ssd1306_Line(50, 48, 58, 56, White);
+    ssd1306_Line(58, 56, 70, 56, White);
+    ssd1306_Line(70, 56, 78, 48, White);
+
+    ssd1306_UpdateScreen();
+}
+
+void OLED_Cara_Derrota(void)
+{
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(34, 0);
+    ssd1306_WriteString("DERROTA", Font_7x10, White);
+
+    // Ojos caidos
+    ssd1306_Line(32, 30, 48, 26, White);
+    ssd1306_Line(80, 26, 96, 30, White);
+
+    // Lagrima
+    ssd1306_Line(42, 34, 42, 42, White);
+
+    // Boca triste
+    ssd1306_Line(50, 56, 58, 48, White);
+    ssd1306_Line(58, 48, 70, 48, White);
+    ssd1306_Line(70, 48, 78, 56, White);
+
+    ssd1306_UpdateScreen();
 }
 
 /* USER CODE END 4 */
