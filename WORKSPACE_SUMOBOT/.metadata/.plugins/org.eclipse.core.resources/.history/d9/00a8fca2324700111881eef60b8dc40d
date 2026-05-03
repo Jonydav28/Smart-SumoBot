@@ -75,6 +75,9 @@ uint16_t adc_sharp = 0;
 #define VEL_GIRO_BAJA       45
 #define VEL_GIRO_ALTA       85
 
+#define RGB_ON   GPIO_PIN_SET
+#define RGB_OFF  GPIO_PIN_RESET
+
 #define ESTADO_BT_CONTROL        0
 #define ESTADO_AUTO              1
 #define ESTADO_ESPERA            2
@@ -1128,12 +1131,12 @@ uint32_t medir_ultrasonico(GPIO_TypeDef *TRIG_Port, uint16_t TRIG_Pin,
     }
 
     // Medir tiempo en alto
-    __HAL_TIM_SET_COUNTER(&htim4, 0);
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
 
     timeout = 0;
     while (HAL_GPIO_ReadPin(ECHO_Port, ECHO_Pin) == GPIO_PIN_SET)
     {
-        tiempo = __HAL_TIM_GET_COUNTER(&htim4);
+        tiempo = __HAL_TIM_GET_COUNTER(&htim2);
         timeout++;
         if (timeout > 30000) return 999;
     }
@@ -1652,12 +1655,9 @@ void buzzer_ataque(void)
 
 void RGB_SetEstado(uint8_t estado)
 {
-    if (estado_rgb != estado)
-    {
-        estado_rgb = estado;
-        tiempo_rgb = HAL_GetTick();
-        rgb_toggle = 0;
-    }
+    estado_rgb = estado;
+    tiempo_rgb = HAL_GetTick();
+    rgb_toggle = 0;
 }
 
 void RGB_PWM_Set(uint8_t r, uint8_t g, uint8_t b)

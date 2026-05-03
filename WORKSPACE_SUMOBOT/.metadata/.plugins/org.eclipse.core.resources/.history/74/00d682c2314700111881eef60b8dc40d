@@ -75,6 +75,9 @@ uint16_t adc_sharp = 0;
 #define VEL_GIRO_BAJA       45
 #define VEL_GIRO_ALTA       85
 
+#define RGB_ON   GPIO_PIN_SET
+#define RGB_OFF  GPIO_PIN_RESET
+
 #define ESTADO_BT_CONTROL        0
 #define ESTADO_AUTO              1
 #define ESTADO_ESPERA            2
@@ -444,6 +447,7 @@ int main(void)
 	    HAL_Delay(1000);
 */
  /*Prueba de LED en diferentes estados con OLED*/
+	    // ESTADO ESPERA
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: ESPERA", Font_7x10, White);
@@ -458,6 +462,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
+	    // ESTADO AUTO
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: AUTO", Font_7x10, White);
@@ -472,20 +477,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
-	    ssd1306_Fill(Black);
-	    ssd1306_SetCursor(5, 10);
-	    ssd1306_WriteString("RGB: BT CONTROL", Font_7x10, White);
-	    ssd1306_SetCursor(5, 30);
-	    ssd1306_WriteString("Azul fijo", Font_7x10, White);
-	    ssd1306_UpdateScreen();
-
-	    RGB_SetEstado(ESTADO_BT_CONTROL);
-	    for (int i = 0; i < 200; i++)
-	    {
-	        RGB_Actualizar();
-	        HAL_Delay(10);
-	    }
-
+	    // ESTADO BATERIA BAJA
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: BAT BAJA", Font_7x10, White);
@@ -500,6 +492,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
+	    // ESTADO BT SIN EMPAREJAR
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: BT SIN", Font_7x10, White);
@@ -514,6 +507,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
+	    // ESTADO VICTORIA
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: VICTORIA", Font_7x10, White);
@@ -528,6 +522,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
+	    // ESTADO DERROTA
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: DERROTA", Font_7x10, White);
@@ -542,6 +537,7 @@ int main(void)
 	        HAL_Delay(10);
 	    }
 
+	    // IMPACTO BREVE
 	    ssd1306_Fill(Black);
 	    ssd1306_SetCursor(5, 10);
 	    ssd1306_WriteString("RGB: IMPACTO", Font_7x10, White);
@@ -550,7 +546,7 @@ int main(void)
 	    ssd1306_UpdateScreen();
 
 	    RGB_Impacto_Breve();
-	    for (int i = 0; i < 100; i++)
+	    for (int i = 0; i < 80; i++)
 	    {
 	        RGB_Actualizar();
 	        HAL_Delay(10);
@@ -1128,12 +1124,12 @@ uint32_t medir_ultrasonico(GPIO_TypeDef *TRIG_Port, uint16_t TRIG_Pin,
     }
 
     // Medir tiempo en alto
-    __HAL_TIM_SET_COUNTER(&htim4, 0);
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
 
     timeout = 0;
     while (HAL_GPIO_ReadPin(ECHO_Port, ECHO_Pin) == GPIO_PIN_SET)
     {
-        tiempo = __HAL_TIM_GET_COUNTER(&htim4);
+        tiempo = __HAL_TIM_GET_COUNTER(&htim2);
         timeout++;
         if (timeout > 30000) return 999;
     }
@@ -1652,12 +1648,15 @@ void buzzer_ataque(void)
 
 void RGB_SetEstado(uint8_t estado)
 {
-    if (estado_rgb != estado)
-    {
-        estado_rgb = estado;
-        tiempo_rgb = HAL_GetTick();
-        rgb_toggle = 0;
-    }
+    estado_rgb = estado;
+    tiempo_rgb = HAL_GetTick();
+    rgb_toggle = 0;
+}
+
+
+void RGB_Off(void)
+{
+    RGB_Set(0, 0, 0);
 }
 
 void RGB_PWM_Set(uint8_t r, uint8_t g, uint8_t b)
