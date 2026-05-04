@@ -2182,6 +2182,7 @@ void OLED_Mostrar_Bateria(uint16_t voltaje_mV, int16_t corriente_x10, uint8_t es
     ssd1306_UpdateScreen();
 }
 
+
 void verificar_bateria(void)
 {
     uint16_t voltaje_mV = INA219_ReadBusVoltage_mV();
@@ -2201,11 +2202,11 @@ void verificar_bateria(void)
         aviso_bateria_emitido = 0;
         bateria_critica = 0;
     }
+
     else if (voltaje_mV >= BAT_CRITICA_MV)
     {
         estado_bateria = 2; // BAJA
         bateria_critica = 0;
-
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2214,11 +2215,10 @@ void verificar_bateria(void)
             aviso_bateria_emitido = 1;
         }
     }
-    else
+    else if (voltaje_mV >= BAT_CRITICA_MV)
     {
-        estado_bateria = 3; // CRITICA
-        bateria_critica = 1;
-
+        estado_bateria = 2; // BAJA
+        bateria_critica = 0;
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2226,16 +2226,7 @@ void verificar_bateria(void)
             buzzer_bateria_baja();
             aviso_bateria_emitido = 1;
         }
-
-        // Detener el robot por seguridad
-        mover_robot(0, 0);
-        motor_izquierdo(0);
-        motor_derecho(0);
-        vel_actual_izq = 0;
-        vel_actual_der = 0;
     }
-
-    OLED_Mostrar_Bateria(voltaje_mV, corriente_x10, estado_bateria);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

@@ -101,15 +101,10 @@ uint8_t rgb_toggle = 0;
 uint32_t tiempo_impacto_rgb = 0;
 uint8_t impacto_activo = 0;
 
-uint8_t bateria_critica = 0;
-
 uint8_t aviso_bateria_emitido = 0;
 
-#define MODO_TECNICO    0
-#define MODO_ESPERA     1
-#define MODO_AUTONOMO   2
-#define MODO_REMOTO     3
-
+#define MODO_TECNICO      0
+#define MODO_COMPETENCIA  1
 
 volatile uint8_t modo_operacion = MODO_TECNICO;
 volatile uint8_t flag_cambio_modo = 0;
@@ -667,9 +662,9 @@ int main(void)
 	        t_bateria = ahora;
 	        verificar_bateria();
 	    }
-	    // 6. Modos
 
-	    if (bateria_critica)
+	    // 6. MODO TECNICO
+	    if (modo_operacion == MODO_TECNICO)
 	    {
 	        mover_robot(0, 0);
 	        motor_izquierdo(0);
@@ -677,63 +672,26 @@ int main(void)
 	        vel_actual_izq = 0;
 	        vel_actual_der = 0;
 
-	        RGB_SetEstado(ESTADO_BATERIA_BAJA);
+	        // Aquí después puedes mostrar sensores o batería en OLED
 	    }
-	    else if (modo_operacion == MODO_TECNICO)
-	    {
-	        // Modo de pruebas y diagnostico
-	        mover_robot(0, 0);
-	        motor_izquierdo(0);
-	        motor_derecho(0);
-	        vel_actual_izq = 0;
-	        vel_actual_der = 0;
 
-	        // Aquí puedes mostrar sensores, bateria, etc.
-	    }
-	    else if (modo_operacion == MODO_ESPERA)
+	    // 7. MODO COMPETENCIA
+	    else if (modo_operacion == MODO_COMPETENCIA)
 	    {
-	        // Esperando señal de inicio
-	        mover_robot(0, 0);
-	        motor_izquierdo(0);
-	        motor_derecho(0);
-	        vel_actual_izq = 0;
-	        vel_actual_der = 0;
-
-	        RGB_SetEstado(ESTADO_ESPERA);
-	    }
-	    else if (modo_operacion == MODO_AUTONOMO)
-	    {
-	        // Modo de combate autonomo
+	        // Sensores cada 80 ms
 	        if (ahora - t_sensores >= 80)
 	        {
 	            t_sensores = ahora;
 	            modo_autonomo_basico();
 	        }
 
+	        // Rampa de motores cada 10 ms
 	        if (ahora - t_rampa >= 10)
 	        {
 	            t_rampa = ahora;
 	            actualizar_rampa();
 	        }
 	    }
-	    else if (modo_operacion == MODO_REMOTO)
-	    {
-	        // Modo control remoto por Bluetooth
-	        // Por ahora puedes dejar motores detenidos hasta integrar UART/Bluetooth
-
-	        mover_robot(0, 0);
-	        motor_izquierdo(0);
-	        motor_derecho(0);
-	        vel_actual_izq = 0;
-	        vel_actual_der = 0;
-
-	        RGB_SetEstado(ESTADO_BT_CONTROL);
-
-	        // Luego aquí irá la lectura de comandos Bluetooth:
-	        // comando = leer_bluetooth();
-	        // ejecutar_comando_bluetooth(comando);
-	    }
-
 
 
   }
@@ -2182,6 +2140,7 @@ void OLED_Mostrar_Bateria(uint16_t voltaje_mV, int16_t corriente_x10, uint8_t es
     ssd1306_UpdateScreen();
 }
 
+
 void verificar_bateria(void)
 {
     uint16_t voltaje_mV = INA219_ReadBusVoltage_mV();
@@ -2193,19 +2152,15 @@ void verificar_bateria(void)
     {
         estado_bateria = 0; // OK
         aviso_bateria_emitido = 0;
-        bateria_critica = 0;
     }
     else if (voltaje_mV >= BAT_BAJA_MV)
     {
         estado_bateria = 1; // MEDIA
         aviso_bateria_emitido = 0;
-        bateria_critica = 0;
     }
     else if (voltaje_mV >= BAT_CRITICA_MV)
     {
         estado_bateria = 2; // BAJA
-        bateria_critica = 0;
-
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2217,8 +2172,6 @@ void verificar_bateria(void)
     else
     {
         estado_bateria = 3; // CRITICA
-        bateria_critica = 1;
-
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2227,12 +2180,7 @@ void verificar_bateria(void)
             aviso_bateria_emitido = 1;
         }
 
-        // Detener el robot por seguridad
-        mover_robot(0, 0);
-        motor_izquierdo(0);
-        motor_derecho(0);
-        vel_actual_izq = 0;
-        vel_actual_der = 0;
+        mover_robot(0, 0); // opcional: detener motores por seguridad
     }
 
     OLED_Mostrar_Bateria(voltaje_mV, corriente_x10, estado_bateria);
@@ -2253,63 +2201,39 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void cambiar_modo_operacion(void)
 {
-    // Cambia al siguiente modo
     if (modo_operacion == MODO_TECNICO)
     {
-        modo_operacion = MODO_ESPERA;
-    }
-    else if (modo_operacion == MODO_ESPERA)
-    {
-        modo_operacion = MODO_AUTONOMO;
-    }
-    else if (modo_operacion == MODO_AUTONOMO)
-    {
-        modo_operacion = MODO_REMOTO;
+        modo_operacion = MODO_COMPETENCIA;
+
+        RGB_SetEstado(ESTADO_AUTO);
+        buzzer_inicio();
+
+        ssd1306_Fill(Black);
+        ssd1306_SetCursor(0, 15);
+        ssd1306_WriteString("MODO:", Font_7x10, White);
+        ssd1306_SetCursor(0, 35);
+        ssd1306_WriteString("COMPETENCIA", Font_7x10, White);
+        ssd1306_UpdateScreen();
     }
     else
     {
         modo_operacion = MODO_TECNICO;
-    }
 
-    // Detener motores cada vez que se cambia de modo
-    mover_robot(0, 0);
-    motor_izquierdo(0);
-    motor_derecho(0);
-    vel_actual_izq = 0;
-    vel_actual_der = 0;
+        mover_robot(0, 0);
+        motor_izquierdo(0);
+        motor_derecho(0);
+        vel_actual_izq = 0;
+        vel_actual_der = 0;
 
-    // Mostrar modo en OLED
-    ssd1306_Fill(Black);
-    ssd1306_SetCursor(0, 10);
-    ssd1306_WriteString("MODO:", Font_7x10, White);
+        RGB_SetEstado(ESTADO_BT_CONTROL);
 
-    if (modo_operacion == MODO_TECNICO)
-    {
-        ssd1306_SetCursor(0, 32);
+        ssd1306_Fill(Black);
+        ssd1306_SetCursor(0, 15);
+        ssd1306_WriteString("MODO:", Font_7x10, White);
+        ssd1306_SetCursor(0, 35);
         ssd1306_WriteString("TECNICO", Font_7x10, White);
-        RGB_SetEstado(ESTADO_BT_CONTROL);   // Azul
+        ssd1306_UpdateScreen();
     }
-    else if (modo_operacion == MODO_ESPERA)
-    {
-        ssd1306_SetCursor(0, 32);
-        ssd1306_WriteString("ESPERA", Font_7x10, White);
-        RGB_SetEstado(ESTADO_ESPERA);       // Amarillo intermitente
-    }
-    else if (modo_operacion == MODO_AUTONOMO)
-    {
-        ssd1306_SetCursor(0, 32);
-        ssd1306_WriteString("AUTONOMO", Font_7x10, White);
-        RGB_SetEstado(ESTADO_AUTO);         // Verde
-        buzzer_inicio();
-    }
-    else if (modo_operacion == MODO_REMOTO)
-    {
-        ssd1306_SetCursor(0, 32);
-        ssd1306_WriteString("CONTROL REMOTO", Font_7x10, White);
-        RGB_SetEstado(ESTADO_BT_CONTROL);   // Azul
-    }
-
-    ssd1306_UpdateScreen();
 }
 
 

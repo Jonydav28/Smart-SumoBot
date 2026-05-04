@@ -2182,6 +2182,7 @@ void OLED_Mostrar_Bateria(uint16_t voltaje_mV, int16_t corriente_x10, uint8_t es
     ssd1306_UpdateScreen();
 }
 
+
 void verificar_bateria(void)
 {
     uint16_t voltaje_mV = INA219_ReadBusVoltage_mV();
@@ -2193,19 +2194,15 @@ void verificar_bateria(void)
     {
         estado_bateria = 0; // OK
         aviso_bateria_emitido = 0;
-        bateria_critica = 0;
     }
     else if (voltaje_mV >= BAT_BAJA_MV)
     {
         estado_bateria = 1; // MEDIA
         aviso_bateria_emitido = 0;
-        bateria_critica = 0;
     }
     else if (voltaje_mV >= BAT_CRITICA_MV)
     {
         estado_bateria = 2; // BAJA
-        bateria_critica = 0;
-
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2217,8 +2214,6 @@ void verificar_bateria(void)
     else
     {
         estado_bateria = 3; // CRITICA
-        bateria_critica = 1;
-
         RGB_SetEstado(ESTADO_BATERIA_BAJA);
 
         if (aviso_bateria_emitido == 0)
@@ -2227,12 +2222,7 @@ void verificar_bateria(void)
             aviso_bateria_emitido = 1;
         }
 
-        // Detener el robot por seguridad
-        mover_robot(0, 0);
-        motor_izquierdo(0);
-        motor_derecho(0);
-        vel_actual_izq = 0;
-        vel_actual_der = 0;
+        mover_robot(0, 0); // opcional: detener motores por seguridad
     }
 
     OLED_Mostrar_Bateria(voltaje_mV, corriente_x10, estado_bateria);
